@@ -1,0 +1,49 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+    <!-- Main-->
+    <system:String x:Key="IssueCard">办理园区一卡通</system:String>
+    <system:String x:Key="IssueCardDescript">请先通过i友未来社区App申请</system:String>
+    <system:String x:Key="ReCard">园区卡丢失，补办园区一卡通</system:String>
+    <system:String x:Key="ReCardDescript">请先通过i友未来社区App挂失/补卡</system:String>
+    <system:String x:Key="QrCodeDescript">扫码下载i友未来社区APP</system:String>
+    <system:String x:Key="PhoneDescript">客服热线：4000-1000-33</system:String>
+    
+    <!-- Flow-->
+    <system:String x:Key="Query">查询</system:String>
+    <system:String x:Key="ConfirmInfo">确认信息</system:String>
+    <system:String x:Key="WaitCard">等待制卡</system:String>
+    <system:String x:Key="TakeCard">取卡</system:String>
+
+    <!-- Query-->
+    <system:String x:Key="Back">&lt;</system:String>
+    <system:String x:Key="InputCode">请输入取卡码</system:String>
+    <system:String x:Key="InputPhoneNo">请输入办卡手机号</system:String>
+
+    <!-- Take-->
+    <system:String x:Key="Close">关闭</system:String>
+
+    <!-- Confirm-->
+    <system:String x:Key="Name">姓名：</system:String>
+    <system:String x:Key="IdNo">证件号：</system:String>
+    <system:String x:Key="PhoneNo">手机号：</system:String>
+    <system:String x:Key="Enterprise">所在企业：</system:String>
+    <system:String x:Key="ConfirmDescript">如需更换照片，请打开i友APP完成</system:String>
+    <system:String x:Key="Confirmed">已确认，下一步</system:String>
+
+    <!-- Keyboard-->
+    <system:String x:Key="Zero">0</system:String>
+    <system:String x:Key="One">1</system:String>
+    <system:String x:Key="Two">2</system:String>
+    <system:String x:Key="Three">3</system:String>
+    <system:String x:Key="Four">4</system:String>
+    <system:String x:Key="Five">5</system:String>
+    <system:String x:Key="Six">6</system:String>
+    <system:String x:Key="Seven">7</system:String>
+    <system:String x:Key="Eight">8</system:String>
+    <system:String x:Key="Nine">9</system:String>
+    <system:String x:Key="Dot">.</system:String>
+    <system:String x:Key="Clear">清除</system:String>
+    <system:String x:Key="Backspace">回退</system:String>
+    <system:String x:Key="Confirm">确认</system:String>
+</ResourceDictionary>

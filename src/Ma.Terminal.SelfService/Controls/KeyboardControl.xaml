@@ -1,0 +1,260 @@
+﻿<UserControl x:Class="Ma.Terminal.SelfService.Controls.KeyboardControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Ma.Terminal.SelfService.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="744" d:DesignWidth="840">
+    <Grid Background="#FFFFFF">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="186*"/>
+            <RowDefinition Height="186*"/>
+            <RowDefinition Height="186*"/>
+            <RowDefinition Height="186*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="218*"/>
+            <ColumnDefinition Width="218*"/>
+            <ColumnDefinition Width="218*"/>
+            <ColumnDefinition Width="218*"/>
+        </Grid.ColumnDefinitions>
+        <local:ClickEffectGrid x:Name="One"
+                               Grid.Row="0" Grid.Column="0" Tag="1">
+            <Border Background="Transparent" BorderBrush="#EBEBEB" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="73*"/>
+                        <RowDefinition Height="40*"/>
+                        <RowDefinition Height="73*"/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="1">
+                        <TextBlock Text="{StaticResource One}"
+                                   Foreground="#0F1826"
+                                   FontWeight="Bold"/>
+                    </Viewbox>
+                </Grid>
+            </Border>
+        </local:ClickEffectGrid>
+        <local:ClickEffectGrid x:Name="Two"
+                               Grid.Row="0" Grid.Column="1" Tag="2">
+            <Border Background="Transparent" BorderBrush="#EBEBEB" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="73*"/>
+                        <RowDefinition Height="40*"/>
+                        <RowDefinition Height="73*"/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="1">
+                        <TextBlock Text="{StaticResource Two}"
+                                   Foreground="#0F1826"
+                                   FontWeight="Bold"/>
+                    </Viewbox>
+                </Grid>
+            </Border>
+        </local:ClickEffectGrid>
+        <local:ClickEffectGrid x:Name="Three"
+                               Grid.Row="0" Grid.Column="2" Tag="3">
+            <Border Background="Transparent" BorderBrush="#EBEBEB" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="73*"/>
+                        <RowDefinition Height="40*"/>
+                        <RowDefinition Height="73*"/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="1">
+                        <TextBlock Text="{StaticResource Three}"
+                                   Foreground="#0F1826"
+                                   FontWeight="Bold"/>
+                    </Viewbox>
+                </Grid>
+            </Border>
+        </local:ClickEffectGrid>
+        <local:ClickEffectGrid x:Name="Clear"
+                               Grid.Row="0" Grid.Column="3">
+            <Border Background="Transparent" BorderBrush="#EBEBEB" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="73*"/>
+                        <RowDefinition Height="40*"/>
+                        <RowDefinition Height="73*"/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="1">
+                        <TextBlock Text="{StaticResource Clear}"
+                                   Foreground="#6E7580"
+                                   FontWeight="Medium"/>
+                    </Viewbox>
+                </Grid>
+            </Border>
+        </local:ClickEffectGrid>
+        <local:ClickEffectGrid x:Name="Four"
+                               Grid.Row="1" Grid.Column="0" Tag="4">
+            <Border Background="Transparent" BorderBrush="#EBEBEB" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="73*"/>
+                        <RowDefinition Height="40*"/>
+                        <RowDefinition Height="73*"/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="1">
+                        <TextBlock Text="{StaticResource Four}"
+                                   Foreground="#0F1826"
+                                   FontWeight="Bold"/>
+                    </Viewbox>
+                </Grid>
+            </Border>
+        </local:ClickEffectGrid>
+        <local:ClickEffectGrid x:Name="Five"
+                               Grid.Row="1" Grid.Column="1" Tag="5">
+            <Border Background="Transparent" BorderBrush="#EBEBEB" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="73*"/>
+                        <RowDefinition Height="40*"/>
+                        <RowDefinition Height="73*"/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="1">
+                        <TextBlock Text="{StaticResource Five}"
+                                   Foreground="#0F1826"
+                                   FontWeight="Bold"/>
+                    </Viewbox>
+                </Grid>
+            </Border>
+        </local:ClickEffectGrid>
+        <local:ClickEffectGrid x:Name="Six"
+                               Grid.Row="1" Grid.Column="2" Tag="6">
+            <Border Background="Transparent" BorderBrush="#EBEBEB" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="73*"/>
+                        <RowDefinition Height="40*"/>
+                        <RowDefinition Height="73*"/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="1">
+                        <TextBlock Text="{StaticResource Six}"
+                                   Foreground="#0F1826"
+                                   FontWeight="Bold"/>
+                    </Viewbox>
+                </Grid>
+            </Border>
+        </local:ClickEffectGrid>
+        <local:ClickEffectGrid x:Name="Backspace"
+                               Grid.Row="1" Grid.Column="3">
+            <Border Background="Transparent" BorderBrush="#EBEBEB" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="73*"/>
+                        <RowDefinition Height="40*"/>
+                        <RowDefinition Height="73*"/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="1">
+                        <TextBlock Text="{StaticResource Backspace}"
+                                   Foreground="#6E7580"
+                                   FontWeight="Medium"/>
+                    </Viewbox>
+                </Grid>
+            </Border>
+        </local:ClickEffectGrid>
+        <local:ClickEffectGrid x:Name="Seven"
+                               Grid.Row="2" Grid.Column="0" Tag="7">
+            <Border Background="Transparent" BorderBrush="#EBEBEB" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="73*"/>
+                        <RowDefinition Height="40*"/>
+                        <RowDefinition Height="73*"/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="1">
+                        <TextBlock Text="{StaticResource Seven}"
+                                   Foreground="#0F1826"
+                                   FontWeight="Bold"/>
+                    </Viewbox>
+                </Grid>
+            </Border>
+        </local:ClickEffectGrid>
+        <local:ClickEffectGrid x:Name="Eight"
+                               Grid.Row="2" Grid.Column="1" Tag="8">
+            <Border Background="Transparent" BorderBrush="#EBEBEB" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="73*"/>
+                        <RowDefinition Height="40*"/>
+                        <RowDefinition Height="73*"/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="1">
+                        <TextBlock Text="{StaticResource Eight}"
+                                   Foreground="#0F1826"
+                                   FontWeight="Bold"/>
+                    </Viewbox>
+                </Grid>
+            </Border>
+        </local:ClickEffectGrid>
+        <local:ClickEffectGrid x:Name="Nine"
+                               Grid.Row="2" Grid.Column="2" Tag="9">
+            <Border Background="Transparent" BorderBrush="#EBEBEB" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="73*"/>
+                        <RowDefinition Height="40*"/>
+                        <RowDefinition Height="73*"/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="1">
+                        <TextBlock Text="{StaticResource Nine}"
+                                   Foreground="#0F1826"
+                                   FontWeight="Bold"/>
+                    </Viewbox>
+                </Grid>
+            </Border>
+        </local:ClickEffectGrid>
+        <local:ClickEffectGrid x:Name="Confirm"
+                               Grid.Row="2" Grid.Column="3" Grid.RowSpan="2"
+                               Background="#FFC941">
+            <Border Background="Transparent" BorderBrush="#EBEBEB" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="167*"/>
+                        <RowDefinition Height="40*"/>
+                        <RowDefinition Height="167*"/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="1">
+                        <TextBlock Text="{StaticResource Confirm}"
+                                   Foreground="#0F1826"
+                                   FontWeight="Bold"/>
+                    </Viewbox>
+                </Grid>
+            </Border>
+        </local:ClickEffectGrid>
+        <local:ClickEffectGrid x:Name="Zero" Grid.Row="3" Grid.Column="0" Tag="0" Grid.ColumnSpan="2">
+            <Border Background="Transparent" BorderBrush="#EBEBEB" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="73*"/>
+                        <RowDefinition Height="40*"/>
+                        <RowDefinition Height="73*"/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="1">
+                        <TextBlock Text="{StaticResource Zero}"
+                                   Foreground="#0F1826"
+                                   FontWeight="Bold"/>
+                    </Viewbox>
+                </Grid>
+            </Border>
+        </local:ClickEffectGrid>
+        <local:ClickEffectGrid x:Name="Dot" Grid.Row="3" Grid.Column="2" Tag=".">
+            <Border Background="Transparent" BorderBrush="#EBEBEB" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="73*"/>
+                        <RowDefinition Height="40*"/>
+                        <RowDefinition Height="73*"/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="1">
+                        <TextBlock Text="{StaticResource Dot}"
+                                   Foreground="#0F1826"
+                                   FontWeight="Bold"/>
+                    </Viewbox>
+                </Grid>
+            </Border>
+        </local:ClickEffectGrid>
+    </Grid>
+</UserControl>
