@@ -19,6 +19,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Api\BmpToJpg.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Api\HDSSSE32.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Api\UnPack.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resource\Image\Back.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
