@@ -13,8 +13,9 @@ namespace Ma.Terminal.SelfService.Device.Reader
         public string LastError { get; set; }
         public ReaderApi.StatusEnum Status { get; set; }
 
-        public bool OpenCard()
+        public bool OpenCard(out byte[] uid)
         {
+            uid = new byte[10];
             _handler = ReaderApi.ICC_Reader_Open(DEV_NAME);
 
             if (_handler.ToInt32() <= 0)
@@ -37,9 +38,8 @@ namespace Ma.Terminal.SelfService.Device.Reader
                 LastError = "请求卡片失败";
                 return false;
             }
-
-            byte[] UID = new byte[10];
-            Status = ReaderApi.PICC_Reader_anticoll(_handler, UID);
+            
+            Status = ReaderApi.PICC_Reader_anticoll(_handler, uid);
             if (Status != ReaderApi.StatusEnum.IFD_OK)
             {
                 LastError = "防碰撞失败";

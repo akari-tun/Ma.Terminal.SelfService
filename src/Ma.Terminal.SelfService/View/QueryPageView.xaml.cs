@@ -4,6 +4,7 @@ using Ma.Terminal.SelfService.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -28,6 +29,7 @@ namespace Ma.Terminal.SelfService.View
 
         public IPageViewInterface BackPageView { get; set; }
         public IPageViewInterface NextPageView { get; set; }
+        public IPageViewInterface ErrorPageView { get; set; }
 
         public QueryPageView()
         {
@@ -37,7 +39,38 @@ namespace Ma.Terminal.SelfService.View
             DataContext = _viewModel;
 
             Title.OnBackspaceClick += () => _viewModel.NavigationTo(BackPageView);
-            Keyboard.OnConfirmButtonClick += () => _viewModel.NavigationTo(NextPageView);
+            Keyboard.OnConfirmButtonClick += async () =>
+            {
+                Keyboard.IsEnabled = false;
+                TextPhone.IsReadOnly = true;
+                TextCode.IsReadOnly = true;
+
+                try
+                {
+                    var model = await _viewModel.Query(TextPhone.Text, TextCode.Text);
+                    if (model != null)
+                    {
+                        Ioc.Default.GetRequiredService<UserModel>().Update(model);
+                        _viewModel.NavigationTo(NextPageView);
+                    }
+                    else
+                    {
+                        var errVM = ErrorPageView.ViewModel as ErrorPageViewModel;
+                        errVM.ErrorType = "NoCard";
+                        _viewModel.NavigationTo(ErrorPageView);
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
+                finally
+                {
+                    Keyboard.IsEnabled = true;
+                    TextPhone.IsReadOnly = false;
+                    TextCode.IsReadOnly = false;
+                }
+            };
             Keyboard.OnClearButtonClick += () =>
             {
                 if (_currentTextBox != null)
@@ -72,7 +105,8 @@ namespace Ma.Terminal.SelfService.View
 
         private void QueryPageView_Loaded(object sender, RoutedEventArgs e)
         {
-            TextCode.Focus();
+            Keyboard.Focus();
+            _currentTextBox = TextCode;
         }
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)

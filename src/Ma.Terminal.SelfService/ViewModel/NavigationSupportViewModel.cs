@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Ma.Terminal.SelfService.Model;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Controls;
@@ -27,7 +29,7 @@ namespace Ma.Terminal.SelfService.ViewModel
 
                 if (page is IBackspaceSupportView backSupport)
                 {
-                    backSupport.NavigatedTo(null);
+                    backSupport.NavigatedTo(Ioc.Default.GetRequiredService<UserModel>());
                 }
             }
         }

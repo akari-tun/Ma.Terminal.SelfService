@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Ma.Terminal.SelfService.Model;
 using Ma.Terminal.SelfService.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,7 @@ namespace Ma.Terminal.SelfService.View
         {
             if (sender.Tag != null)
             {
+                Ioc.Default.GetRequiredService<UserModel>().PinkupType = sender.Name;
                 _viewModel.NavigationTo?.Invoke(sender.Tag as IPageViewInterface);
             }
         }

@@ -36,6 +36,13 @@ namespace Ma.Terminal.SelfService.View
 
             Title.OnBackspaceClick += () => _viewModel.NavigationTo(BackPageView);
             Confirm.OnClick += p => _viewModel.NavigationTo(NextPageView);
+
+            Loaded += ConfirmPageView_Loaded;
+        }
+
+        private void ConfirmPageView_Loaded(object sender, RoutedEventArgs e)
+        {
+            _viewModel.Initialization();
         }
 
         public IPageViewInterface Init(INavigationSupport navigationParent)

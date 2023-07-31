@@ -43,5 +43,17 @@ namespace Ma.Terminal.SelfService.Controls
 
             OnClick?.Invoke(this);
         }
+
+        protected override void OnMouseLeave(MouseEventArgs e)
+        {
+            this.Margin = DEFAULT_MARGIN_THICKNESS;
+            base.OnMouseLeave(e);
+        }
+
+        protected override void OnTouchLeave(TouchEventArgs e)
+        {
+            this.Margin = DEFAULT_MARGIN_THICKNESS;
+            base.OnTouchLeave(e);
+        }
     }
 }

@@ -52,7 +52,7 @@
                         <ColumnDefinition Width="46*"/>
                     </Grid.ColumnDefinitions>
                     <Viewbox HorizontalAlignment="Left" Grid.Column="1">
-                        <TextBox x:Name="TextCode" BorderThickness="0" Width="200" CaretBrush="#6E7580" MaxLength="5">
+                        <TextBox x:Name="TextCode" BorderThickness="0" Width="200" CaretBrush="#6E7580" MaxLength="7">
                             <TextBox.Resources>
                                 <VisualBrush x:Key="HintText" AlignmentX="Left" Opacity="0.5" Stretch="None" TileMode="None">
                                     <VisualBrush.Visual>
@@ -107,7 +107,7 @@
                                     <VisualBrush.Visual>
                                         <TextBlock FontSize="12"
                                                    Foreground="#6E7580"
-                                                   Text="{StaticResource InputCode}" />
+                                                   Text="{StaticResource InputPhoneNo}" />
                                     </VisualBrush.Visual>
                                 </VisualBrush>
                             </TextBox.Resources>

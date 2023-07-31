@@ -37,7 +37,7 @@ namespace Ma.Terminal.SelfService.View
             Title.OnBackspaceClick += () => _viewModel.NavigationTo(BackPageView);
 
             NoCard.Visibility = Visibility.Visible;
-            NoCard.Visibility = Visibility.Collapsed;
+            HaveCard.Visibility = Visibility.Collapsed;
         }
 
         public IPageViewInterface Init(INavigationSupport navigationParent)
@@ -49,6 +49,12 @@ namespace Ma.Terminal.SelfService.View
 
         public void NavigatedTo(IModel model)
         {
+            Ioc.Default.GetRequiredService<ErrorPageViewModel>();
+            NoCard.Visibility = Visibility.Collapsed;
+            HaveCard.Visibility = Visibility.Collapsed;
+
+            if (NoCard.Name == _viewModel.ErrorType) NoCard.Visibility = Visibility.Visible;
+            if (HaveCard.Name == _viewModel.ErrorType) HaveCard.Visibility = Visibility.Visible;
         }
     }
 }

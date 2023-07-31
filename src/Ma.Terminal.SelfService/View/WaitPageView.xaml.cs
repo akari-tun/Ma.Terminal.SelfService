@@ -34,7 +34,7 @@ namespace Ma.Terminal.SelfService.View
             _viewModel = Ioc.Default.GetRequiredService<WaitPageViewModel>();
             DataContext = _viewModel;
 
-            _viewModel.OnCardPrinted += () =>
+            _viewModel.OnCardPrinted += (r, m) =>
             {
                 Application.Current.Dispatcher.BeginInvoke(_viewModel.NavigationTo, NextPageView);
             };

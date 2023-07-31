@@ -1,6 +1,10 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Ma.Terminal.SelfService.Model;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Ma.Terminal.SelfService.ViewModel
 {
@@ -48,9 +52,42 @@ namespace Ma.Terminal.SelfService.ViewModel
             }
         }
 
+        ImageSource _fontImage;
+        public ImageSource FontImage
+        {
+            get { return _fontImage; }
+            set
+            {
+                SetProperty(ref _fontImage, value);
+            }
+        }
+
+        ImageSource _backImage;
+        public ImageSource BackImage
+        {
+            get { return _backImage; }
+            set
+            {
+                SetProperty(ref _backImage, value);
+            }
+        }
+
         public override void Initialization()
         {
             Title = GetString("ConfirmInfo");
+
+            var model = Ioc.Default.GetRequiredService<UserModel>();
+
+            SetProperty(ref _name, model.UserName, nameof(Name));
+            SetProperty(ref _idNo, model.IdCard, nameof(IdNo));
+            SetProperty(ref _phoneNo, model.PhoneNumber, nameof(PhoneNo));
+            SetProperty(ref _enterprise, model.CompanyName, nameof(Enterprise));
+
+            var facePath = string.IsNullOrEmpty(model.CardFacePath) ? "pack://SiteOfOrigin:,,,/Resource/Image/Photo.png" : model.CardFacePath;
+            var backPath = string.IsNullOrEmpty(model.CardFacePath) ? "pack://SiteOfOrigin:,,,/Resource/Image/Photo.png" : model.CardBackPath;
+
+            FontImage = BitmapFrame.Create(new Uri(facePath), BitmapCreateOptions.None, BitmapCacheOption.Default);
+            BackImage = BitmapFrame.Create(new Uri(backPath), BitmapCreateOptions.None, BitmapCacheOption.Default);
         }
     }
 }

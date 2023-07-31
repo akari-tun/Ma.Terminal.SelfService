@@ -67,7 +67,7 @@
                         </Viewbox>
                         <Viewbox Grid.Column="2" HorizontalAlignment="Left">
                             <TextBlock x:Name="Name"
-                                       Text="吧唧"
+                                       Text="{Binding Name, Mode=OneWay}"
                                        FontWeight="Medium"/>
                         </Viewbox>
                     </Grid>
@@ -83,7 +83,7 @@
                         </Viewbox>
                         <Viewbox Grid.Column="2" HorizontalAlignment="Left">
                             <TextBlock x:Name="IdNo"
-                                       Text="109099*********3726"
+                                       Text="{Binding IdNo, Mode=OneWay}"
                                        FontWeight="Medium"/>
                         </Viewbox>
                     </Grid>
@@ -99,7 +99,7 @@
                         </Viewbox>
                         <Viewbox Grid.Column="2" HorizontalAlignment="Left">
                             <TextBlock x:Name="PhoneNo"
-                                       Text="154****5455"
+                                       Text="{Binding PhoneNo, Mode=OneWay}"
                                        FontWeight="Medium"/>
                         </Viewbox>
                     </Grid>
@@ -115,22 +115,28 @@
                         </Viewbox>
                         <Viewbox Grid.Column="2" HorizontalAlignment="Left">
                             <TextBlock x:Name="Enterprise"
-                                       Text="一站科技（北京）科技有限公司"
+                                       Text="{Binding Enterprise, Mode=OneWay}"
                                        FontWeight="Medium"/>
                         </Viewbox>
                     </Grid>
                     <Grid Grid.Row="9">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="251*"/>
+                            <ColumnDefinition Width="161*"/>
                             <ColumnDefinition Width="180*"/>
-                            <ColumnDefinition Width="14*"/>
+                            <ColumnDefinition Width="4*"/>
                             <ColumnDefinition Width="180*"/>
-                            <ColumnDefinition Width="251*"/>
+                            <ColumnDefinition Width="24*"/>
+                            <ColumnDefinition Width="180*"/>
+                            <ColumnDefinition Width="161*"/>
                         </Grid.ColumnDefinitions>
                         <Viewbox Grid.Column="1">
-                            <Image x:Name="Photo" Source="pack://SiteOfOrigin:,,,/Resource/Image/Photo.png" />
+                            <Image x:Name="Photo" Source="{Binding FontImage, Mode=OneWay}" />
                         </Viewbox>
                         <Viewbox Grid.Column="3">
+                            <Image Source="{Binding BackImage, Mode=OneWay}" />
+                        </Viewbox>
+
+                        <Viewbox Grid.Column="5">
                             <Image Source="pack://SiteOfOrigin:,,,/Resource/Image/QrCode.png" />
                         </Viewbox>
                     </Grid>
