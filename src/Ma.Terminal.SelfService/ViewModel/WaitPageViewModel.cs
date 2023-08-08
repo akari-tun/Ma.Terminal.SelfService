@@ -23,6 +23,8 @@ namespace Ma.Terminal.SelfService.ViewModel
         private PrintDocument _doucument; 
         private Device.Printer.Operator _printer;
         private Device.Reader.Operator _reader;
+        private Device.Lanyard.Operator _lanyard;
+        private Device.Light.Operator _light;
         private Requester _api;
         private Machine _machine;
         private byte[] _uid;
@@ -46,12 +48,16 @@ namespace Ma.Terminal.SelfService.ViewModel
         public WaitPageViewModel(Machine machine,
             Requester api,
             Device.Reader.Operator reader,
-            Device.Printer.Operator printer)
+            Device.Printer.Operator printer,
+            Device.Lanyard.Operator lanyard,
+            Device.Light.Operator light)
         {
             _machine = machine;
             _api = api;
             _reader = reader;
             _printer = printer;
+            _lanyard = lanyard;
+            _light = light;
 
             _doucument = new PrintDocument();
             _doucument.PrinterSettings.PrinterName = _machine.PrinterName;
@@ -222,6 +228,17 @@ namespace Ma.Terminal.SelfService.ViewModel
                 OnCardPrinted?.Invoke(false, _api.LastMessage);
                 return;
             }
+            
+            int.TryParse(_machine.Detail.CardCount, out int card);
+            int.TryParse(_machine.Detail.InkCount, out int ink);
+            int.TryParse(_machine.Detail.CardRopeCover, out int lanyard);
+
+            card--;
+            ink--;
+            lanyard--;
+
+            await Task.Run(() => _lanyard.RollLanyard(_machine.MaxLanyard - lanyard, model.OrderId));
+            await Task.Run(() => _light.Light(_machine.MaxLanyard - lanyard));
 
             await _api.SaveMachine(_machine.MachineNo,
                 _machine.Detail.CardCount,

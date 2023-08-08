@@ -3,5 +3,8 @@
   "ApiUrl": "http://ykttest.innoecos.cn:9001",
   "PrinterName": "Microsoft Print to PDF",
   "LanyardPort": 1,
-  "LightPort": 2
+  "LightPort": 2,
+  "MaxCard": 200,
+  "MaxLanyard": 80,
+  "MaxInk": 980
 }

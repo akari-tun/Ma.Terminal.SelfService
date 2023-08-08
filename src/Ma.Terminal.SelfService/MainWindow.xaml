@@ -26,6 +26,6 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
-        <Frame x:Name="MainFrame" Height="1920" Width="1080"/>
+        <Frame x:Name="MainFrame" Height="1080" Width="607"/>
     </Grid>
 </Window>

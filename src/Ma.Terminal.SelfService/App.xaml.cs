@@ -46,6 +46,7 @@ namespace Ma.Terminal.SelfService
                 .AddSingleton(typeof(ConfirmPageViewModel))
                 .AddSingleton(typeof(WaitPageViewModel))
                 .AddSingleton(typeof(TakePageViewModel))
+                .AddSingleton(typeof(ResetPageViewModel))
                 .AddSingleton(typeof(Device.Printer.Operator))
                 .AddSingleton(typeof(Device.Reader.Operator))
                 .AddSingleton(new UserModel())
@@ -53,7 +54,19 @@ namespace Ma.Terminal.SelfService
                 {
                     MachineNo = cfgRoot.GetSection("MachineNo").Value,
                     ApiUrl = cfgRoot.GetSection("ApiUrl").Value,
-                    PrinterName = cfgRoot.GetSection("PrinterName").Value
+                    PrinterName = cfgRoot.GetSection("PrinterName").Value,
+                    MaxCard = int.Parse(cfgRoot.GetSection("MaxCard").Value),
+                    MaxInk = int.Parse(cfgRoot.GetSection("MaxInk").Value),
+                    MaxLanyard = int.Parse(cfgRoot.GetSection("MaxLanyard").Value),
+                    Detail = new Detail()
+                    {
+                        ProjectId = string.Empty,
+                        Address = string.Empty,
+                        CardCount = string.Empty,
+                        InkCount = string.Empty,
+                        CardRopeCover = string.Empty,
+                        Status = 1
+                    }
                 })
                 .AddSingleton(typeof(Requester))
                 .AddSingleton(new Device.Lanyard.Operator()

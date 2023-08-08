@@ -31,6 +31,12 @@
     <system:String x:Key="ConfirmDescript">如需更换照片，请打开i友APP完成</system:String>
     <system:String x:Key="Confirmed">已确认，下一步</system:String>
 
+    <!-- Reset-->
+    <system:String x:Key="CardSurplus">剩余卡片</system:String>
+    <system:String x:Key="InkSurplus">剩余墨水</system:String>
+    <system:String x:Key="LanyardSurplus">剩余挂绳</system:String>
+    <system:String x:Key="Reset">重置</system:String>
+
     <!-- Keyboard-->
     <system:String x:Key="Zero">0</system:String>
     <system:String x:Key="One">1</system:String>

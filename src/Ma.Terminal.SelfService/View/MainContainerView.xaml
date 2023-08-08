@@ -34,9 +34,11 @@
                 </controls:ClickEffectGrid>
             </Viewbox>
             <Viewbox Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left">
-                <TextBlock Text="{StaticResource PhoneDescript}"
-                           FontWeight="Normal"
-                           Foreground="#6E7580"/>
+                <controls:ClickEffectGrid OnClick="ResetClick">
+                    <TextBlock Text="{StaticResource PhoneDescript}"
+                               FontWeight="Normal"
+                               Foreground="#6E7580"/>
+                </controls:ClickEffectGrid>
             </Viewbox>
         </Grid>
     </Grid>

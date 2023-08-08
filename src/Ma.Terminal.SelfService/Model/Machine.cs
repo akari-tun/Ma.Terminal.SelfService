@@ -9,6 +9,9 @@ namespace Ma.Terminal.SelfService.Model
         public string MachineNo { get; set; }
         public string ApiUrl { get; set; }
         public string PrinterName { get; set; }
+        public int MaxCard { get; set; }
+        public int MaxLanyard { get; set; }
+        public int MaxInk { get; set; }
 
         public Detail Detail { get; set; }
     }
