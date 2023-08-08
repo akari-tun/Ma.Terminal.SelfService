@@ -107,6 +107,9 @@ namespace Ma.Terminal.SelfService.View
         {
             Keyboard.Focus();
             _currentTextBox = TextCode;
+
+            TextCode.Text = string.Empty;
+            TextPhone.Text = string.Empty;
         }
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)

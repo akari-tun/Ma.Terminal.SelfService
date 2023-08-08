@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Ma.Terminal.SelfService.Controls;
 using Ma.Terminal.SelfService.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -70,6 +71,11 @@ namespace Ma.Terminal.SelfService.View
         private void MainContainerView_Loaded(object sender, RoutedEventArgs e)
         {
             _viewModel.NavigationTo(_viewModel.PageList[0]);
+        }
+
+        private void ExitClick(ClickEffectGrid sender)
+        {
+            Application.Current.Shutdown();
         }
     }
 }

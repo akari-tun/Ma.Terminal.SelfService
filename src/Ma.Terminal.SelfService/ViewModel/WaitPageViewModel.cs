@@ -26,6 +26,7 @@ namespace Ma.Terminal.SelfService.ViewModel
         private Requester _api;
         private Machine _machine;
         private byte[] _uid;
+        private Queue<Image> _waitPrintImages;
 
         public delegate void CardPrintedHandler(bool isSuccess, string msg);
         public event CardPrintedHandler OnCardPrinted;
@@ -56,6 +57,8 @@ namespace Ma.Terminal.SelfService.ViewModel
             _doucument.PrinterSettings.PrinterName = _machine.PrinterName;
             _doucument.PrintPage += PrintPage;
             _doucument.EndPrint += PrintEnd;
+
+            _waitPrintImages = new Queue<Image>();
         }
 
         public override void Initialization()
@@ -67,6 +70,8 @@ namespace Ma.Terminal.SelfService.ViewModel
         {
             Task.Run(async () =>
             {
+                var model = Ioc.Default.GetRequiredService<UserModel>();
+
                 if (!_printer.MoveToRfPosition())
                 {
                     OnCardPrinted?.Invoke(false, _printer.LastError);
@@ -78,8 +83,6 @@ namespace Ma.Terminal.SelfService.ViewModel
                     OnCardPrinted?.Invoke(false, _reader.LastError);
                     return;
                 }
-
-                var model = Ioc.Default.GetRequiredService<UserModel>();
 
                 var openCardApdu = await _api.OpenCardApdu(model.OrderId,
                     model.UserId,
@@ -147,38 +150,62 @@ namespace Ma.Terminal.SelfService.ViewModel
                     }
                 }
 
+                _waitPrintImages.Clear();
+
+                var facePath = string.IsNullOrEmpty(model.CardFacePath) ? "pack://SiteOfOrigin:,,,/Resource/Image/Photo.png" : model.CardFacePath;
+                var backPath = string.IsNullOrEmpty(model.CardBackPath) ? "pack://SiteOfOrigin:,,,/Resource/Image/Photo.png" : model.CardBackPath;
+
+                var fontImage = BitmapFrame.Create(new Uri(facePath), BitmapCreateOptions.None, BitmapCacheOption.Default);
+                var backImage = BitmapFrame.Create(new Uri(backPath), BitmapCreateOptions.None, BitmapCacheOption.Default);
+
+                Image front = null;
+                Image back = null;
+
+                using (MemoryStream outStream = new MemoryStream())
+                {
+                    BitmapEncoder enc = new BmpBitmapEncoder();
+                    enc.Frames.Add(fontImage);
+                    enc.Save(outStream);
+                    front = new Bitmap(outStream);
+                    front.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                }
+
+                using (MemoryStream outStream = new MemoryStream())
+                {
+                    BitmapEncoder enc = new BmpBitmapEncoder();
+                    enc.Frames.Add(backImage);
+                    enc.Save(outStream);
+                    back = new Bitmap(outStream);
+                    back.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                }
+
+                _waitPrintImages.Enqueue(front);
+                _waitPrintImages.Enqueue(back);
+
                 _doucument.Print();
             });
         }
 
         private void PrintPage(object sender, PrintPageEventArgs e)
         {
-            Rectangle rect;
-            IntPtr hPrinterDC;
-
-            e.Graphics.PageUnit = GraphicsUnit.Pixel;
-            hPrinterDC = e.Graphics.GetHdc();
-            e.Graphics.ReleaseHdc(hPrinterDC);
-
-            var model = Ioc.Default.GetRequiredService<UserModel>();
-            var facePath = string.IsNullOrEmpty(model.CardFacePath) ? "pack://SiteOfOrigin:,,,/Resource/Image/Photo.png" : model.CardFacePath;
-            var backPath = string.IsNullOrEmpty(model.CardFacePath) ? "pack://SiteOfOrigin:,,,/Resource/Image/Photo.png" : model.CardBackPath;
-
-            var fontImage = BitmapFrame.Create(new Uri(facePath), BitmapCreateOptions.None, BitmapCacheOption.Default);
-            var backImage = BitmapFrame.Create(new Uri(backPath), BitmapCreateOptions.None, BitmapCacheOption.Default);
-
-            Image img = null;
-
-            using (MemoryStream outStream = new MemoryStream())
+            if (_waitPrintImages.Count > 0)
             {
-                BitmapEncoder enc = new BmpBitmapEncoder();
-                enc.Frames.Add(fontImage);
-                enc.Save(outStream);
-                img = new Bitmap(outStream);
+                var img = _waitPrintImages.Dequeue();
+
+                Rectangle rect;
+                IntPtr hPrinterDC;
+
+                e.Graphics.PageUnit = GraphicsUnit.Pixel;
+                hPrinterDC = e.Graphics.GetHdc();
+                e.Graphics.ReleaseHdc(hPrinterDC);
+
+                rect = new Rectangle(720, 160, 260, 350);
+                e.Graphics.DrawImage(img, rect);
+
+                img.Dispose();
             }
 
-            rect = new Rectangle(720, 160, 260, 350);
-            e.Graphics.DrawImage(img, rect);
+            e.HasMorePages = _waitPrintImages.Count > 0;
         }
 
         private async void PrintEnd(object sender, PrintEventArgs e)

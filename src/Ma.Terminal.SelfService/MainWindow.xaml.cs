@@ -34,10 +34,10 @@ namespace Ma.Terminal.SelfService
         {
             base.OnActivated(e);
 
-            //this.WindowState = WindowState.Normal;
-            //this.WindowStyle = WindowStyle.None;
-            //this.ResizeMode = ResizeMode.NoResize;
-            //this.Topmost = true;
+            this.WindowState = WindowState.Maximized;
+            this.WindowStyle = WindowStyle.None;
+            this.ResizeMode = ResizeMode.NoResize;
+            this.Topmost = true;
             this.Left = 0.0;
             this.Top = 0.0;
             this.Width = SystemParameters.PrimaryScreenWidth;
