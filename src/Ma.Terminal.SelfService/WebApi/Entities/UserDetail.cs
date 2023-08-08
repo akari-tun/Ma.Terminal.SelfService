@@ -42,5 +42,9 @@ namespace Ma.Terminal.SelfService.WebApi.Entities
         /// 必须 卡⽚背⾯地址
         /// </summary>
         public string CardBackPath { get; set; }
+        /// <summary>
+        /// 订单号
+        /// </summary>
+        public string OrderId { get; set; }
     }
 }

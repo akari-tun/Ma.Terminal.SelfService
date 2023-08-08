@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Ma.Terminal.SelfService.Device.Reader;
 using Ma.Terminal.SelfService.Model;
 using Ma.Terminal.SelfService.Resource;
 using Ma.Terminal.SelfService.ViewModel;
@@ -47,14 +46,26 @@ namespace Ma.Terminal.SelfService
                 .AddSingleton(typeof(ConfirmPageViewModel))
                 .AddSingleton(typeof(WaitPageViewModel))
                 .AddSingleton(typeof(TakePageViewModel))
-                .AddSingleton(typeof(Operator))
+                .AddSingleton(typeof(Device.Printer.Operator))
+                .AddSingleton(typeof(Device.Reader.Operator))
                 .AddSingleton(new UserModel())
                 .AddSingleton(new Machine()
                 {
                     MachineNo = cfgRoot.GetSection("MachineNo").Value,
-                    ApiUrl = cfgRoot.GetSection("ApiUrl").Value
+                    ApiUrl = cfgRoot.GetSection("ApiUrl").Value,
+                    PrinterName = cfgRoot.GetSection("PrinterName").Value
                 })
                 .AddSingleton(typeof(Requester))
+                .AddSingleton(new Device.Lanyard.Operator()
+                { 
+                    Port = int.Parse(cfgRoot.GetSection("LanyardPort").Value),
+                    Baudrate = 115200
+                })
+                .AddSingleton(new Device.Light.Operator()
+                {
+                    Port = int.Parse(cfgRoot.GetSection("LightPort").Value),
+                    Baudrate = 115200
+                })
                 .BuildServiceProvider());
 
             var path = $"pack://application:,,,/Resource/String.xaml";

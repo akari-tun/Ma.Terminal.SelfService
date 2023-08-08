@@ -31,7 +31,8 @@ namespace Ma.Terminal.SelfService.ViewModel
             {
                 return new UserModel()
                 {
-                    PhoneNumber = phone,
+                    PinkupPhoneNumber = phone,
+                    PhoneNumber = entity.PhoneNumber,
                     PinkupCode = code,
                     UserId = entity.UserId,
                     OrderType = entity.OrderType,
@@ -40,7 +41,8 @@ namespace Ma.Terminal.SelfService.ViewModel
                     CompanyId = entity.CompanyId,
                     CompanyName = entity.CompanyName,
                     CardFacePath = entity.CardFacePath,
-                    CardBackPath = entity.CardBackPath
+                    CardBackPath = entity.CardBackPath,
+                    OrderId = entity.OrderId
                 };
             }
 

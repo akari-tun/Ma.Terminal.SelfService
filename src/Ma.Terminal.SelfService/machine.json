@@ -1,4 +1,7 @@
 {
   "MachineNo": "101",
-  "ApiUrl": "http://ykttest.innoecos.cn:9001"
+  "ApiUrl": "http://ykttest.innoecos.cn:9001",
+  "PrinterName": "Microsoft Print to PDF",
+  "LanyardPort": 1,
+  "LightPort": 2
 }

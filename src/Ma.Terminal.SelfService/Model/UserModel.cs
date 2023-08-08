@@ -7,6 +7,10 @@ namespace Ma.Terminal.SelfService.Model
     public class UserModel : IModel
     {
         /// <summary>
+        /// 取卡⽤户⼿机号
+        /// </summary>
+        public string PinkupPhoneNumber { get; set; }
+        /// <summary>
         /// 取卡类型
         /// </summary>
         public string PinkupType { get; set; }

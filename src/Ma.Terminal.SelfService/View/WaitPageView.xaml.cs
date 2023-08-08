@@ -36,7 +36,17 @@ namespace Ma.Terminal.SelfService.View
 
             _viewModel.OnCardPrinted += (r, m) =>
             {
-                Application.Current.Dispatcher.BeginInvoke(_viewModel.NavigationTo, NextPageView);
+                if (r)
+                {
+                    Application.Current.Dispatcher.BeginInvoke(_viewModel.NavigationTo, NextPageView);
+                }
+                else
+                {
+                    _viewModel.ErrMsg = "制卡失败，请联系管理员！";
+                    WaitImage.Visibility = Visibility.Collapsed;
+                    ErrorMessage.Visibility = Visibility.Visible;
+                }
+
             };
             Title.OnBackspaceClick += () => _viewModel.NavigationTo(BackPageView);
         }
@@ -45,6 +55,8 @@ namespace Ma.Terminal.SelfService.View
         {
             _viewModel.Initialization();
             _viewModel.NavigationTo = navigationParent.NavigationTo;
+            WaitImage.Visibility = Visibility.Visible;
+            ErrorMessage.Visibility = Visibility.Collapsed;
             return this;
         }
 

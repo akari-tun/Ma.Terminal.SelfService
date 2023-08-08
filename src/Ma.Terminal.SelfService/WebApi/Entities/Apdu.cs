@@ -13,10 +13,10 @@ namespace Ma.Terminal.SelfService.WebApi.Entities
         /// <summary>
         /// 必须 卡⽚指令
         /// </summary>
-        public string CApdu { get; set; }
+        public string Capdu { get; set; }
         /// <summary>
         /// 必须 期望返回响应码
         /// </summary>
-        public string Sws { get; set; }
+        public List<string> Sws { get; set; }
     }
 }

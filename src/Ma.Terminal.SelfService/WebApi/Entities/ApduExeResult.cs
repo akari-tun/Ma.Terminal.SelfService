@@ -18,6 +18,6 @@ namespace Ma.Terminal.SelfService.WebApi.Entities
         /// <summary>
         /// APDUs
         /// </summary>
-        public List<Apdu> CApdus { get; set; }
+        public List<Apdu> Capdus { get; set; }
     }
 }

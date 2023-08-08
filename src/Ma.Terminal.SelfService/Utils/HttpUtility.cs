@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -120,6 +121,8 @@ namespace Ma.Terminal.SelfService.Utils
         public static async Task<HttpResponseMessage> HttpGetResponseAsync(string url, int timeOut, Encoding encoding = null, Dictionary<string, string> headers = null)
         {
             HttpResponseMessage response = null;
+
+            Debug.WriteLine($"Http get --> [{url}]");
 
             using (HttpClient httpClient = new HttpClient()
             {
@@ -455,6 +458,8 @@ namespace Ma.Terminal.SelfService.Utils
             Dictionary<string, string> headers = null)
         {
             HttpResponseMessage respone = null;
+
+            Debug.WriteLine($"Http post --> [{url}] \r\nContent:[{content}]");
 
             using (HttpClient httpClient = new HttpClient()
             {

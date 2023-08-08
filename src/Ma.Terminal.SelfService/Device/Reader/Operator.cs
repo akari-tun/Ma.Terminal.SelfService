@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Ma.Terminal.Utils;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Ma.Terminal.SelfService.Device.Reader
@@ -15,7 +17,7 @@ namespace Ma.Terminal.SelfService.Device.Reader
 
         public bool OpenCard(out byte[] uid)
         {
-            uid = new byte[10];
+            uid = new byte[4];
             _handler = ReaderApi.ICC_Reader_Open(DEV_NAME);
 
             if (_handler.ToInt32() <= 0)
@@ -66,7 +68,7 @@ namespace Ma.Terminal.SelfService.Device.Reader
             return true;
         }
 
-        public bool ExecuteApdu(byte[] cmd, out byte[] rsp)
+        public bool ExecuteApdu(byte[] cmd, out byte[] rsp, List<string> sws)
         {
             byte[] buff = new byte[255];
 
@@ -81,7 +83,35 @@ namespace Ma.Terminal.SelfService.Device.Reader
             rsp = new byte[len];
             Array.Copy(buff, rsp, len);
 
-            return true;
+            string result = FunTools.BytesToHexStr(rsp, rsp.Length - 2, 2);
+            Debug.WriteLine($"apdu result --> len:{len} rsp:[{result}]");
+            bool ret = false;
+
+            foreach (var item in sws)
+            {
+                if (item.Split(',').Length > 1)
+                {
+                    string[] ss = item.Split(',');
+                    for (int i = 0; i < ss.Length; i++)
+                    {
+                        if (result.Equals(ss[i]))
+                        {
+                            ret = true;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    if (result.Equals(item))
+                    {
+                        ret = true;
+                        break;
+                    }
+                }
+            }
+
+            return ret;
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Ma.Terminal.SelfService.Device.Printer
 
         public bool MoveToRfPosition()
         {
+            return true;
             int result = -1;
 
             result = PrinterApi.CXCMD_ScanPrinter(ref piSlot, ref piID);//扫描打印机，返回值为0，返回参数piSlot,piID
