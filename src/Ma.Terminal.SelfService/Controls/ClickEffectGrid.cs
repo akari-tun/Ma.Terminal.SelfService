@@ -40,8 +40,6 @@ namespace Ma.Terminal.SelfService.Controls
         {
             this.Margin = DEFAULT_MARGIN_THICKNESS;
             base.OnTouchUp(e);
-
-            //OnClick?.Invoke(this);
         }
 
         protected override void OnMouseLeave(MouseEventArgs e)

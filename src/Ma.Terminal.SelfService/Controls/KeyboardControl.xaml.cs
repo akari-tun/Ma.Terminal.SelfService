@@ -21,10 +21,28 @@ namespace Ma.Terminal.SelfService.Controls
         public delegate void DigitButtonClickHandler(string value);
         public delegate void FunctionButtonClickHandler();
 
-        public DigitButtonClickHandler OnDigitButtonClick;
         public FunctionButtonClickHandler OnConfirmButtonClick;
-        public FunctionButtonClickHandler OnClearButtonClick;
-        public FunctionButtonClickHandler OnBackspaceButtonClick;
+
+        string _inputed = string.Empty;
+
+        TextBox _currentTextBox;
+
+        public TextBox CurrentTextBox
+        {
+            get => _currentTextBox;
+            set
+            {
+                _currentTextBox = value;
+                _inputed = _currentTextBox.Text;
+            }
+        }
+
+        public string GetText()
+        {
+            return IsPassword ? _inputed : _currentTextBox.Text;
+        }
+
+        public bool IsPassword { get; set; } = false;
 
         public KeyboardControl()
         {
@@ -43,13 +61,77 @@ namespace Ma.Terminal.SelfService.Controls
             //Dot.OnClick += DigitClick;
 
             Confirm.OnClick += p => OnConfirmButtonClick?.Invoke();
-            Clear.OnClick += p => OnClearButtonClick?.Invoke();
-            Backspace.OnClick += p => OnBackspaceButtonClick?.Invoke();
+
+            Clear.OnClick += p =>
+            {
+                if (_currentTextBox != null)
+                {
+                    _currentTextBox.Text = string.Empty;
+                    _inputed = string.Empty;
+                }
+            };
+            Backspace.OnClick += p =>
+            {
+                if (_currentTextBox != null && _currentTextBox.Text.Length > 0)
+                {
+                    var index = 0;
+
+                    if (IsPassword)
+                    {
+                        index = _currentTextBox.SelectionStart > _inputed.Length ? _inputed.Length : _currentTextBox.SelectionStart;
+                        var l_tmp = _inputed.Substring(0, index - 1);
+                        var r_tmp = _inputed.Substring(index, _inputed.Length - index);
+                        _inputed = l_tmp + r_tmp;
+
+                        StringBuilder sb = new StringBuilder(6);
+                        for (int i = 0; i < _inputed.Length; i++)
+                        {
+                            sb.Append("*");
+                        }
+                        _currentTextBox.Text = sb.ToString();
+                    }
+                    else
+                    {
+                        index = _currentTextBox.SelectionStart;
+                        var l_tmp = _currentTextBox.Text.Substring(0, index - 1);
+                        var r_tmp = _currentTextBox.Text.Substring(index, _currentTextBox.Text.Length - index);
+                        _currentTextBox.Text = l_tmp + r_tmp;
+                    }
+
+                    _currentTextBox.SelectionStart = --index > 0 ? index : 0;
+                }
+            };
         }
 
         private void DigitClick(ClickEffectGrid sender)
         {
-            OnDigitButtonClick?.Invoke(sender.Tag.ToString());
+            if (_currentTextBox != null && _currentTextBox.Text.Length < _currentTextBox.MaxLength)
+            {
+                if (IsPassword)
+                {
+                    var index = _currentTextBox.SelectionStart > _inputed.Length ? _inputed.Length : _currentTextBox.SelectionStart;
+                    var l_tmp = _inputed.Substring(0, index);
+                    var r_tmp = _inputed.Substring(index, _inputed.Length - index);
+                    _inputed = l_tmp + sender.Tag.ToString() + r_tmp;
+
+                    StringBuilder sb = new StringBuilder(6);
+                    for (int i = 0; i < _inputed.Length; i++)
+                    {
+                        sb.Append("*");
+                    }
+                    _currentTextBox.Text = sb.ToString();
+
+                    _currentTextBox.SelectionStart = ++index;
+                }
+                else
+                {
+                    var index = _currentTextBox.SelectionStart;
+                    var l_tmp = _currentTextBox.Text.Substring(0, index);
+                    var r_tmp = _currentTextBox.Text.Substring(index, _currentTextBox.Text.Length - index);
+                    _currentTextBox.Text = l_tmp + sender.Tag.ToString() + r_tmp;
+                    _currentTextBox.SelectionStart = ++index;
+                }
+            }
         }
     }
 }

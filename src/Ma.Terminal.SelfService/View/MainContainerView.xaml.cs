@@ -26,6 +26,7 @@ namespace Ma.Terminal.SelfService.View
 
         private MainPageView _mainPage = new MainPageView();
         private ResetPageView _resetPage = new ResetPageView();
+        private InputPwdPageView _inputPwdPage = new InputPwdPageView();
         private QueryPageView _queryPage = new QueryPageView();
         private ErrorPageView _errorPage = new ErrorPageView();
         private ConfirmPageView _confirmPage = new ConfirmPageView();
@@ -48,7 +49,8 @@ namespace Ma.Terminal.SelfService.View
                 _confirmPage,
                 _waitPage,
                 _takePage,
-                _resetPage
+                _resetPage,
+                _inputPwdPage
             };
 
             foreach (var item in _viewModel.PageList)
@@ -69,6 +71,8 @@ namespace Ma.Terminal.SelfService.View
             _takePage.BackPageView = _mainPage;
             _takePage.NextPageView = _mainPage;
             _resetPage.BackPageView = _mainPage;
+            _inputPwdPage.NextPageView = _resetPage;
+            _inputPwdPage.BackPageView = _mainPage;
         }
 
         private void MainContainerView_Loaded(object sender, RoutedEventArgs e)
@@ -78,12 +82,14 @@ namespace Ma.Terminal.SelfService.View
 
         private void ExitClick(ClickEffectGrid sender)
         {
-            Application.Current.Shutdown();
+            _inputPwdPage.ActionType = InputPwdPageView.ActionTypeEnum.EXIT;
+            _viewModel.NavigationTo(_inputPwdPage);
         }
 
         private void ResetClick(ClickEffectGrid sender)
         {
-            _viewModel.NavigationTo(_resetPage);
+            _inputPwdPage.ActionType = InputPwdPageView.ActionTypeEnum.RESET;
+            _viewModel.NavigationTo(_inputPwdPage);
         }
     }
 }

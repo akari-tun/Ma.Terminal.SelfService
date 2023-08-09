@@ -22,8 +22,6 @@ namespace Ma.Terminal.SelfService.View
     /// </summary>
     public partial class QueryPageView : Page, IPageViewInterface, IBackspaceSupportView, INextPageSupportView
     {
-        TextBox _currentTextBox = null;
-
         QueryPageViewModel _viewModel;
         public IViewModel ViewModel => _viewModel;
 
@@ -71,31 +69,7 @@ namespace Ma.Terminal.SelfService.View
                     TextCode.IsReadOnly = false;
                 }
             };
-            Keyboard.OnClearButtonClick += () =>
-            {
-                if (_currentTextBox != null)
-                {
-                    _currentTextBox.Text = string.Empty;
-                }
-            };
-            Keyboard.OnBackspaceButtonClick += () =>
-            {
-                if (_currentTextBox != null && _currentTextBox.Text.Length > 0)
-                {
-                    _currentTextBox.Text = _currentTextBox.Text.Substring(0, _currentTextBox.Text.Length - 1);
-                }
-            };
-            Keyboard.OnDigitButtonClick += value =>
-            {
-                if (_currentTextBox != null && _currentTextBox.Text.Length < _currentTextBox.MaxLength)
-                {
-                    var index = _currentTextBox.SelectionStart;
-                    var l_tmp = _currentTextBox.Text.Substring(0, index);
-                    var r_tmp = _currentTextBox.Text.Substring(index, _currentTextBox.Text.Length - index);
-                    _currentTextBox.Text = l_tmp + value + r_tmp;
-                    _currentTextBox.SelectionStart = ++index;
-                }
-            };
+
 
             TextCode.GotFocus += TextBox_GotFocus;
             TextPhone.GotFocus += TextBox_GotFocus;
@@ -105,16 +79,16 @@ namespace Ma.Terminal.SelfService.View
 
         private void QueryPageView_Loaded(object sender, RoutedEventArgs e)
         {
-            Keyboard.Focus();
-            _currentTextBox = TextCode;
-
             TextCode.Text = string.Empty;
             TextPhone.Text = string.Empty;
+
+            Keyboard.Focus();
+            Keyboard.CurrentTextBox = TextCode;
         }
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            _currentTextBox = sender as TextBox;
+            Keyboard.CurrentTextBox = sender as TextBox;
         }
 
         public IPageViewInterface Init(INavigationSupport navigationParent)

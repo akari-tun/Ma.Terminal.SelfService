@@ -8,21 +8,20 @@
              d:DesignHeight="188" d:DesignWidth="1080">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="50*"/>
-            <ColumnDefinition Width="60*"/>
-            <ColumnDefinition Width="970*"/>
+            <ColumnDefinition Width="160*"/>
+            <ColumnDefinition Width="920*"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="73*"/>
-            <RowDefinition Height="42*"/>
-            <RowDefinition Height="73*"/>
-        </Grid.RowDefinitions>
-        <local:ClickEffectGrid Grid.Column="1" Grid.Row="1" OnClick="ClickEffectGrid_OnClick">
-            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
+        <local:ClickEffectGrid Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" OnClick="ClickEffectGrid_OnClick" Background="#00FFFFFF">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="73*"/>
+                <RowDefinition Height="42*"/>
+                <RowDefinition Height="73*"/>
+            </Grid.RowDefinitions>
+            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1">
                 <Image Source="pack://SiteOfOrigin:,,,/Resource/Image/Back.png" />
             </Viewbox>
         </local:ClickEffectGrid>
-        <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Grid.RowSpan="3">
+        <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="57*"/>
                 <RowDefinition Height="70*"/>

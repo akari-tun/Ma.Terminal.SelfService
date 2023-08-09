@@ -106,6 +106,16 @@
                 </Grid>
             </controls:ClickEffectGrid>
         </Grid>
+        <Grid Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="175*"/>
+                <RowDefinition Height="50*"/>
+                <RowDefinition Height="175*"/>
+            </Grid.RowDefinitions>
+            <Viewbox Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock x:Name="ErrorMsg" Foreground="Red" />
+            </Viewbox>
+        </Grid>
         <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="185*"/>

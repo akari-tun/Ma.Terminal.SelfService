@@ -6,5 +6,6 @@
   "LightPort": 2,
   "MaxCard": 200,
   "MaxLanyard": 80,
-  "MaxInk": 980
+  "MaxInk": 980,
+  "Password": "123456"
 }

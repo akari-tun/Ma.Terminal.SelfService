@@ -47,6 +47,7 @@ namespace Ma.Terminal.SelfService
                 .AddSingleton(typeof(WaitPageViewModel))
                 .AddSingleton(typeof(TakePageViewModel))
                 .AddSingleton(typeof(ResetPageViewModel))
+                .AddSingleton(typeof(InputPwdPageViewModel))
                 .AddSingleton(typeof(Device.Printer.Operator))
                 .AddSingleton(typeof(Device.Reader.Operator))
                 .AddSingleton(new UserModel())
@@ -58,14 +59,15 @@ namespace Ma.Terminal.SelfService
                     MaxCard = int.Parse(cfgRoot.GetSection("MaxCard").Value),
                     MaxInk = int.Parse(cfgRoot.GetSection("MaxInk").Value),
                     MaxLanyard = int.Parse(cfgRoot.GetSection("MaxLanyard").Value),
+                    Password = cfgRoot.GetSection("Password").Value,
                     Detail = new Detail()
                     {
                         ProjectId = string.Empty,
                         Address = string.Empty,
-                        CardCount = string.Empty,
-                        InkCount = string.Empty,
-                        CardRopeCover = string.Empty,
-                        Status = 1
+                        CardCount = "0",
+                        InkCount = "0",
+                        CardRopeCover = "0",
+                        Status = 0
                     }
                 })
                 .AddSingleton(typeof(Requester))
@@ -84,26 +86,6 @@ namespace Ma.Terminal.SelfService
             var path = $"pack://application:,,,/Resource/String.xaml";
             Resources.MergedDictionaries[0].Source = new Uri(path);
             ResourceManager.Instance.StringResourceDictionary = Resources.MergedDictionaries[0];
-
-            Task.Run(async () =>
-            {
-                var requester = Ioc.Default.GetRequiredService<Requester>();
-                var machine = Ioc.Default.GetRequiredService<Machine>();
-                var detail = await requester.GetMachineDetail();
-
-                if (detail != null)
-                {
-                    machine.Detail = new Detail()
-                    {
-                        ProjectId = detail.ProjectId,
-                        Address = detail.Address,
-                        CardCount = detail.CardCount,
-                        InkCount = detail.InkCount,
-                        CardRopeCover = detail.CardRopeCover,
-                        Status = detail.Status
-                    };
-                }
-            });
         }
     }
 }

@@ -8,6 +8,7 @@
     <system:String x:Key="ReCardDescript">请先通过i友未来社区App挂失/补卡</system:String>
     <system:String x:Key="QrCodeDescript">扫码下载i友未来社区APP</system:String>
     <system:String x:Key="PhoneDescript">客服热线：4000-1000-33</system:String>
+    <system:String x:Key="NoServiceDescript">非常抱歉，本机暂停服务！</system:String>
     
     <!-- Flow-->
     <system:String x:Key="Query">查询</system:String>
@@ -36,6 +37,11 @@
     <system:String x:Key="InkSurplus">剩余墨水</system:String>
     <system:String x:Key="LanyardSurplus">剩余挂绳</system:String>
     <system:String x:Key="Reset">重置</system:String>
+
+    <!-- InputPwd-->
+    <system:String x:Key="CheckPwd">验证密码</system:String>
+    <system:String x:Key="InputPwd">请输入密码</system:String>
+    <system:String x:Key="PwdIncorrectDescript">密码不正确！</system:String>
 
     <!-- Keyboard-->
     <system:String x:Key="Zero">0</system:String>

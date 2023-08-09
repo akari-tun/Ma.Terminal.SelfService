@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Ma.Terminal.SelfService.Model;
 using Ma.Terminal.SelfService.ViewModel;
+using Ma.Terminal.SelfService.WebApi;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -33,6 +35,42 @@ namespace Ma.Terminal.SelfService.View
 
             InitCard.OnClick += Grid_OnClick;
             ReCard.OnClick += Grid_OnClick;
+
+            Loaded += MainPageView_Loaded;
+        }
+
+        private void MainPageView_Loaded(object sender, RoutedEventArgs e)
+        {
+            ErrorMsg.Text = string.Empty;
+            InitCard.IsEnabled = false;
+            ReCard.IsEnabled = false;
+
+            Task.Run(async () =>
+            {
+                var requester = Ioc.Default.GetRequiredService<Requester>();
+                var machine = Ioc.Default.GetRequiredService<Machine>();
+                var detail = await requester.GetMachineDetail();
+
+                if (detail != null)
+                {
+                    machine.Detail = new Detail()
+                    {
+                        ProjectId = detail.ProjectId,
+                        Address = detail.Address,
+                        CardCount = detail.CardCount,
+                        InkCount = detail.InkCount,
+                        CardRopeCover = detail.CardRopeCover,
+                        Status = detail.Status
+                    };
+                }
+
+                await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    ErrorMsg.Text = machine.Detail.Status == 1 ? string.Empty : _viewModel.GetString("NoServiceDescript");
+                    InitCard.IsEnabled = machine.Detail.Status == 1;
+                    ReCard.IsEnabled = machine.Detail.Status == 1;
+                }));
+            });
         }
 
         private void Grid_OnClick(Controls.ClickEffectGrid sender)
