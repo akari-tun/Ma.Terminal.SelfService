@@ -90,6 +90,9 @@ namespace Ma.Terminal.SelfService
             var path = $"pack://application:,,,/Resource/String.xaml";
             Resources.MergedDictionaries[0].Source = new Uri(path);
             ResourceManager.Instance.StringResourceDictionary = Resources.MergedDictionaries[0];
+
+            Ioc.Default.GetRequiredService<Device.Lanyard.Operator>().Init();
+            Ioc.Default.GetRequiredService<Device.Light.Operator>().Init();
         }
     }
 }

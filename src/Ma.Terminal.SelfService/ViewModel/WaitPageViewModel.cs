@@ -152,7 +152,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                     }
                     else
                     {
-                        isHasNext = !apduExe.IsFinished;
+                        isHasNext = !apduExe.Finished;
                     }
                 }
 
@@ -174,6 +174,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                     enc.Save(outStream);
                     front = new Bitmap(outStream);
                     front.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                    front.Save($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Front.jpg");
                 }
 
                 using (MemoryStream outStream = new MemoryStream())
@@ -183,6 +184,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                     enc.Save(outStream);
                     back = new Bitmap(outStream);
                     back.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                    back.Save($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Back.jpg");
                 }
 
                 _waitPrintImages.Enqueue(front);
@@ -205,7 +207,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                 hPrinterDC = e.Graphics.GetHdc();
                 e.Graphics.ReleaseHdc(hPrinterDC);
 
-                rect = new Rectangle(720, 160, 260, 350);
+                rect = new Rectangle(0, 0, 1026, 655);
                 e.Graphics.DrawImage(img, rect);
 
                 img.Dispose();

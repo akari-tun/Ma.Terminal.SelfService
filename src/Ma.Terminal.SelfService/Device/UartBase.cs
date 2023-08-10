@@ -13,7 +13,7 @@ namespace Ma.Terminal.SelfService.Device
         public int Port { get; set; }
         public int Baudrate { get; set; }
 
-        public bool Init()
+        public void Init()
         {
             mSerialPort = new System.IO.Ports.SerialPort
             {
@@ -25,8 +25,6 @@ namespace Ma.Terminal.SelfService.Device
                 WriteTimeout = 1000,
                 ReadTimeout = 1000
             };
-
-            return true;
         }
 
         public void SendCommand()
@@ -41,6 +39,10 @@ namespace Ma.Terminal.SelfService.Device
                 catch (Exception)
                 {
 
+                }
+                finally
+                {
+                    mSerialPort.Close();
                 }
             }
         }

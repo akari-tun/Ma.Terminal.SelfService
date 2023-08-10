@@ -13,7 +13,7 @@ namespace Ma.Terminal.SelfService.WebApi.Entities
         /// <summary>
         /// 必须 个⼈化是否完成
         /// </summary>
-        public bool IsFinished { get; set; }
+        public bool Finished { get; set; }
 
         /// <summary>
         /// APDUs

@@ -42,11 +42,13 @@ namespace Ma.Terminal.SelfService.View
                 }
                 else
                 {
-                    _viewModel.ErrMsg = "制卡失败，请联系管理员！";
-                    WaitImage.Visibility = Visibility.Collapsed;
-                    ErrorMessage.Visibility = Visibility.Visible;
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        _viewModel.ErrMsg = "制卡失败，请联系管理员！";
+                        WaitImage.Visibility = Visibility.Collapsed;
+                        ErrorMessage.Visibility = Visibility.Visible;
+                    }));
                 }
-
             };
             Title.OnBackspaceClick += () => _viewModel.NavigationTo(BackPageView);
         }

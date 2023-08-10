@@ -1,8 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Ma.Terminal.SelfService.Model;
+using Ma.Terminal.SelfService.Utils;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -88,6 +87,13 @@ namespace Ma.Terminal.SelfService.ViewModel
 
             FontImage = BitmapFrame.Create(new Uri(facePath), BitmapCreateOptions.None, BitmapCacheOption.Default);
             BackImage = BitmapFrame.Create(new Uri(backPath), BitmapCreateOptions.None, BitmapCacheOption.Default);
+
+            var front = ImageUtils.ImageSourceToBitmap(FontImage);
+            var back = ImageUtils.ImageSourceToBitmap(BackImage);
+
+            front.Save($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Front.jpg");
+            back.Save($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Back.jpg");
+
         }
     }
 }

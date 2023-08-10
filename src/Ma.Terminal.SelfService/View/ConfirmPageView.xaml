@@ -135,7 +135,6 @@
                         <Viewbox Grid.Column="3">
                             <Image Source="{Binding BackImage, Mode=OneWay}" />
                         </Viewbox>
-
                         <Viewbox Grid.Column="5">
                             <Image Source="pack://SiteOfOrigin:,,,/Resource/Image/QrCode.png" />
                         </Viewbox>

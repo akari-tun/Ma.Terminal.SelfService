@@ -5,6 +5,7 @@ using Ma.Terminal.SelfService.WebApi;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +24,7 @@ namespace Ma.Terminal.SelfService.View
     /// </summary>
     public partial class MainPageView : Page, IPageViewInterface
     {
+        static bool _isLoading = false;
         MainPageViewModel _viewModel = null;
         public IViewModel ViewModel => _viewModel;
 
@@ -45,32 +47,62 @@ namespace Ma.Terminal.SelfService.View
             InitCard.IsEnabled = false;
             ReCard.IsEnabled = false;
 
-            Task.Run(async () =>
+            if (!_isLoading)
             {
-                var requester = Ioc.Default.GetRequiredService<Requester>();
-                var machine = Ioc.Default.GetRequiredService<Machine>();
-                var detail = await requester.GetMachineDetail();
-
-                if (detail != null)
+                Task.Run(async () =>
                 {
-                    machine.Detail = new Detail()
+                    var requester = Ioc.Default.GetRequiredService<Requester>();
+                    var machine = Ioc.Default.GetRequiredService<Machine>();
+
+                    _isLoading = true;
+
+                    try
                     {
-                        ProjectId = detail.ProjectId,
-                        Address = detail.Address,
-                        CardCount = detail.CardCount,
-                        InkCount = detail.InkCount,
-                        CardRopeCover = detail.CardRopeCover,
-                        Status = detail.Status
-                    };
-                }
+                        int waitTime = 0;
 
-                await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    ErrorMsg.Text = machine.Detail.Status == 1 ? string.Empty : _viewModel.GetString("NoServiceDescript");
-                    InitCard.IsEnabled = machine.Detail.Status == 1;
-                    ReCard.IsEnabled = machine.Detail.Status == 1;
-                }));
-            });
+                        do
+                        {
+                            if (waitTime <= 0)
+                            {
+                                var detail = await requester.GetMachineDetail();
+
+                                if (detail != null)
+                                {
+                                    machine.Detail = new Detail()
+                                    {
+                                        ProjectId = detail.ProjectId,
+                                        Address = detail.Address,
+                                        CardCount = detail.CardCount,
+                                        InkCount = detail.InkCount,
+                                        CardRopeCover = detail.CardRopeCover,
+                                        Status = detail.Status
+                                    };
+                                }
+
+                                await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                                {
+                                    ErrorMsg.Text = machine.Detail.Status == 1 ? string.Empty : _viewModel.GetString("NoServiceDescript");
+                                    InitCard.IsEnabled = machine.Detail.Status == 1;
+                                    ReCard.IsEnabled = machine.Detail.Status == 1;
+                                }));
+
+                                waitTime = 10000;
+                            }
+
+                            Thread.Sleep(10);
+                            waitTime -= 10;
+                        } while (machine.Detail.Status != 1);
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    finally
+                    {
+                        _isLoading = false;
+                    }
+                });
+            }
         }
 
         private void Grid_OnClick(Controls.ClickEffectGrid sender)
