@@ -159,6 +159,9 @@ namespace Ma.Terminal.SelfService.ViewModel
                 front.Save($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Front.jpg");
                 back.Save($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Back.jpg");
 
+                front.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                back.RotateFlip(RotateFlipType.Rotate270FlipNone);
+
                 _waitPrintImages.Enqueue(front);
                 _waitPrintImages.Enqueue(back);
 
