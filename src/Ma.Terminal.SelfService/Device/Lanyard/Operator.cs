@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ma.Terminal.Utils;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -34,7 +35,7 @@ namespace Ma.Terminal.SelfService.Device.Lanyard
             var cmd = new LanyardCommand() { Passage = passage, OrderId = orderId };
 
             _command = cmd.ToArray();
-
+            var aa = FunTools.BytesToHexStr(_command);
             SendCommand();
 
             _command = null;

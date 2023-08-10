@@ -31,7 +31,32 @@ namespace Ma.Terminal.SelfService.Device.Light
                 passage = 0xA0 + 3;
             }
 
-            _command = new byte[] { passage, 0x01 };
+            _command = new byte[] { passage, 0x02 };
+
+            SendCommand();
+
+            _command = null;
+        }
+        public void Light()
+        {
+            byte passage = 0;
+
+            passage = 0xA0 + 2;
+
+            _command = new byte[] { passage, 0x02 };
+
+            SendCommand();
+
+            _command = null;
+        }
+
+        public void UnLight()
+        {
+            byte passage = 0;
+
+            passage = 0xA0;
+
+            _command = new byte[] { passage, 0x00 };
 
             SendCommand();
 

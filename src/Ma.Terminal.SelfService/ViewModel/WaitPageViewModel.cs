@@ -26,6 +26,7 @@ namespace Ma.Terminal.SelfService.ViewModel
         private Device.Reader.Operator _reader;
         private Device.Lanyard.Operator _lanyard;
         private Device.Light.Operator _light;
+        private ItemsConfig _config;
         private Requester _api;
         private Machine _machine;
         private byte[] _uid;
@@ -41,7 +42,8 @@ namespace Ma.Terminal.SelfService.ViewModel
             Device.Reader.Operator reader,
             Device.Printer.Operator printer,
             Device.Lanyard.Operator lanyard,
-            Device.Light.Operator light)
+            Device.Light.Operator light,
+            ItemsConfig config)
         {
             _machine = machine;
             _api = api;
@@ -49,6 +51,7 @@ namespace Ma.Terminal.SelfService.ViewModel
             _printer = printer;
             _lanyard = lanyard;
             _light = light;
+            _config = config;
 
             _doucument = new PrintDocument();
             _doucument.PrinterSettings.PrinterName = _machine.PrinterName;
@@ -65,6 +68,8 @@ namespace Ma.Terminal.SelfService.ViewModel
 
         public void PrintCard()
         {
+            Task.Run(() => _light.Light());
+
             Task.Run(async () =>
             {
                 var model = Ioc.Default.GetRequiredService<UserModel>();
@@ -195,6 +200,19 @@ namespace Ma.Terminal.SelfService.ViewModel
         {
             var model = Ioc.Default.GetRequiredService<UserModel>();
 
+            _config.Card--;
+            _config.Ink--;
+            _config.Lanyard--;
+
+            _config.Save();
+
+            _machine.Detail.CardCount = _config.Card.ToString();
+            _machine.Detail.InkCount = _config.Ink.ToString();
+            _machine.Detail.CardRopeCover = _config.Lanyard.ToString();
+
+            await Task.Run(() => _lanyard.RollLanyard(_machine.MaxLanyard - _config.Lanyard, model.OrderId));
+            await Task.Run(() => _light.Light(_machine.MaxLanyard - _config.Lanyard));
+
             var result = await _api.Finish(model.OrderId,
                 model.UserId,
                 FunTools.BytesToHexStr(_uid),
@@ -205,17 +223,6 @@ namespace Ma.Terminal.SelfService.ViewModel
                 OnCardPrinted?.Invoke(false, _api.LastMessage);
                 return;
             }
-            
-            int.TryParse(_machine.Detail.CardCount, out int card);
-            int.TryParse(_machine.Detail.InkCount, out int ink);
-            int.TryParse(_machine.Detail.CardRopeCover, out int lanyard);
-
-            card--;
-            ink--;
-            lanyard--;
-
-            await Task.Run(() => _lanyard.RollLanyard(_machine.MaxLanyard - lanyard, model.OrderId));
-            await Task.Run(() => _light.Light(_machine.MaxLanyard - lanyard));
 
             await _api.SaveMachine(_machine.MachineNo,
                 _machine.Detail.CardCount,

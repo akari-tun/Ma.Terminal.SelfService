@@ -85,6 +85,7 @@ namespace Ma.Terminal.SelfService
                     Port = int.Parse(cfgRoot.GetSection("LightPort").Value),
                     Baudrate = int.Parse(cfgRoot.GetSection("LightBaudrate").Value)
                 })
+                .AddSingleton(ItemsConfig.Read())
                 .BuildServiceProvider());
 
             var path = $"pack://application:,,,/Resource/String.xaml";

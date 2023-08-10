@@ -56,7 +56,7 @@ namespace Ma.Terminal.SelfService.View
 
             if (NoCard.Name == _viewModel.ErrorType) NoCard.Visibility = Visibility.Visible;
             if (HaveCard.Name == _viewModel.ErrorType) HaveCard.Visibility = Visibility.Visible;
-            if (ErrorMessage.Name == _viewModel.ErrorType) HaveCard.Visibility = Visibility.Visible;
+            if (ErrorMessage.Name == _viewModel.ErrorType) ErrorMessage.Visibility = Visibility.Visible;
         }
     }
 }

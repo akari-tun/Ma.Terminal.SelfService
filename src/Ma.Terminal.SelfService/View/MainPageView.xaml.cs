@@ -47,6 +47,8 @@ namespace Ma.Terminal.SelfService.View
             InitCard.IsEnabled = false;
             ReCard.IsEnabled = false;
 
+            Task.Run(() => Ioc.Default.GetRequiredService<Device.Light.Operator>().UnLight());
+
             if (!_isLoading)
             {
                 Task.Run(async () =>

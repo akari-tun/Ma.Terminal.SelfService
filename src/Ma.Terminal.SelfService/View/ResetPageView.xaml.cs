@@ -22,6 +22,8 @@ namespace Ma.Terminal.SelfService.View
     /// </summary>
     public partial class ResetPageView : Page, IPageViewInterface, IBackspaceSupportView
     {
+        Machine _machine;
+        ItemsConfig _config;
         ResetPageViewModel _viewModel;
         public IViewModel ViewModel => _viewModel;
 
@@ -32,6 +34,9 @@ namespace Ma.Terminal.SelfService.View
             InitializeComponent();
 
             _viewModel = Ioc.Default.GetRequiredService<ResetPageViewModel>();
+            _machine = Ioc.Default.GetRequiredService<Machine>();
+            _config = Ioc.Default.GetRequiredService<ItemsConfig>();
+
             DataContext = _viewModel;
 
             Title.OnBackspaceClick += () => _viewModel.NavigationTo(BackPageView);
@@ -56,26 +61,29 @@ namespace Ma.Terminal.SelfService.View
 
         private void ResetCard(ClickEffectGrid sender)
         {
-            var machine = Ioc.Default.GetRequiredService<Machine>();
-            machine.Detail.CardCount = machine.MaxCard.ToString();
+            _config.Card = _machine.MaxCard;
+            _machine.Detail.CardCount = _config.Card.ToString();
+            _viewModel.CardSurplus = _machine.Detail.CardCount;
 
-            _viewModel.CardSurplus = machine.Detail.CardCount;
+            _config.Save();
         }
 
         private void ResetInk(ClickEffectGrid sender)
         {
-            var machine = Ioc.Default.GetRequiredService<Machine>();
-            machine.Detail.InkCount = machine.MaxInk.ToString();
+            _config.Ink = _machine.MaxInk;
+            _machine.Detail.InkCount = _config.Ink.ToString();
+            _viewModel.InkSurplus = _machine.Detail.InkCount;
 
-            _viewModel.InkSurplus = machine.Detail.InkCount;
+            _config.Save();
         }
 
         private void ResetLanyard(ClickEffectGrid sender)
         {
-            var machine = Ioc.Default.GetRequiredService<Machine>();
-            machine.Detail.CardRopeCover = machine.MaxLanyard.ToString();
+            _config.Lanyard = _machine.MaxLanyard;
+            _machine.Detail.CardRopeCover = _config.Lanyard.ToString();
+            _viewModel.LanyardSurplus = _machine.Detail.CardRopeCover;
 
-            _viewModel.LanyardSurplus = machine.Detail.CardRopeCover;
+            _config.Save();
         }
     }
 }

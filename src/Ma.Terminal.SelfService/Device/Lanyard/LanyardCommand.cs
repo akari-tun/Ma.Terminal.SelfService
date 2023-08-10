@@ -15,7 +15,7 @@ namespace Ma.Terminal.SelfService.Device.Lanyard
         public byte LessItemCheckTime { get; set; } = 0x03;
         public string OrderId { get; set; }
         public byte[] Reserver { get; set; } = new byte[14];
-        public byte CRC { get; set; } = 0x4A;
+        public byte CRC { get; set; } = 0x4F;
         public byte[] End { get; set; } = new byte[] { 0x0D, 0x0A };
 
         public byte[] ToArray()
@@ -43,7 +43,10 @@ namespace Ma.Terminal.SelfService.Device.Lanyard
                     ms.Write(new byte[14 - orderId.Length], 0, 14 - orderId.Length);
                 }
 
-                ms.Write(Reserver, 0, Reserver.Length); 
+                ms.Write(Reserver, 0, Reserver.Length);
+                ms.WriteByte(CRC);
+                ms.Write(End, 0, Head.Length);
+                data = ms.ToArray();
             }
 
             return data;
