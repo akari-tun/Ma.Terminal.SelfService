@@ -56,6 +56,10 @@ namespace Ma.Terminal.SelfService
                     MachineNo = cfgRoot.GetSection("MachineNo").Value,
                     ApiUrl = cfgRoot.GetSection("ApiUrl").Value,
                     PrinterName = cfgRoot.GetSection("PrinterName").Value,
+                    LanyardPort = int.Parse(cfgRoot.GetSection("LanyardPort").Value),
+                    LanyardBaudrate = int.Parse(cfgRoot.GetSection("LanyardBaudrate").Value),
+                    LightPort = int.Parse(cfgRoot.GetSection("LightPort").Value),
+                    LightBaudrate = int.Parse(cfgRoot.GetSection("LightBaudrate").Value),
                     MaxCard = int.Parse(cfgRoot.GetSection("MaxCard").Value),
                     MaxInk = int.Parse(cfgRoot.GetSection("MaxInk").Value),
                     MaxLanyard = int.Parse(cfgRoot.GetSection("MaxLanyard").Value),
@@ -74,12 +78,12 @@ namespace Ma.Terminal.SelfService
                 .AddSingleton(new Device.Lanyard.Operator()
                 { 
                     Port = int.Parse(cfgRoot.GetSection("LanyardPort").Value),
-                    Baudrate = 115200
+                    Baudrate = int.Parse(cfgRoot.GetSection("LanyardBaudrate").Value)
                 })
                 .AddSingleton(new Device.Light.Operator()
                 {
                     Port = int.Parse(cfgRoot.GetSection("LightPort").Value),
-                    Baudrate = 115200
+                    Baudrate = int.Parse(cfgRoot.GetSection("LightBaudrate").Value)
                 })
                 .BuildServiceProvider());
 

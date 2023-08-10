@@ -173,7 +173,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                     enc.Frames.Add(fontImage);
                     enc.Save(outStream);
                     front = new Bitmap(outStream);
-                    front.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                    front.RotateFlip(RotateFlipType.Rotate90FlipNone);
                 }
 
                 using (MemoryStream outStream = new MemoryStream())

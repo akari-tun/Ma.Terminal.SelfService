@@ -24,10 +24,15 @@ namespace Ma.Terminal.SelfService
         public MainWindow()
         {
             InitializeComponent();
-            //this.Width = 1080;
-            //this.Height = 1920;
-
             MainFrame.Content = new MainContainerView();
+
+#if DEBUG
+            MainFrame.Height = 1080;
+            MainFrame.Width = 607;
+#else
+            MainFrame.Height = 1920;
+            MainFrame.Width = 1080;
+#endif
         }
 
         protected override void OnActivated(EventArgs e)
@@ -37,7 +42,11 @@ namespace Ma.Terminal.SelfService
             this.WindowState = WindowState.Maximized;
             this.WindowStyle = WindowStyle.None;
             this.ResizeMode = ResizeMode.NoResize;
-            //this.Topmost = true;
+#if DEBUG
+            this.Topmost = false;
+#else
+            this.Topmost = true;
+#endif
             this.Left = 0.0;
             this.Top = 0.0;
             this.Width = SystemParameters.PrimaryScreenWidth;
