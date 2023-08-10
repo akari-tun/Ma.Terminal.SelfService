@@ -11,7 +11,6 @@ namespace Ma.Terminal.SelfService.Device.Printer
 
         public bool MoveToRfPosition()
         {
-            return true;
             int result = -1;
 
             result = PrinterApi.CXCMD_ScanPrinter(ref piSlot, ref piID);//扫描打印机，返回值为0，返回参数piSlot,piID
@@ -59,6 +58,19 @@ namespace Ma.Terminal.SelfService.Device.Printer
 
             LastError = "成功移动卡片到读卡位";
             return true;
+        }
+
+        public void ExitCard()
+        {
+            int result = PrinterApi.CXCMD_MoveCard(piSlot, piID, 4, 0, 0, 0);//出卡
+            if (result == 0)
+            {
+                LastError = "排卡成功";
+            }
+            else
+            {
+                LastError = "排卡失败";
+            }
         }
     }
 }

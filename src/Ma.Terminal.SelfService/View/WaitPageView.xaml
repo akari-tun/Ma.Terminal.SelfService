@@ -45,10 +45,6 @@
             <Viewbox x:Name="WaitImage" Grid.Row="1" Grid.Column="1">
                 <Image Source="pack://SiteOfOrigin:,,,/Resource/Image/WaitCardTips.png" />
             </Viewbox>
-            <Viewbox x:Name="ErrorMessage" Grid.Row="1" Grid.Column="1" Visibility="Collapsed">
-                <TextBlock Text="{Binding ErrorMessage, Mode=OneWay}"
-                           FontWeight="Medium"/>
-            </Viewbox>
         </Grid>
     </Grid>
 </Page>

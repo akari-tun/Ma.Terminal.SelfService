@@ -10,6 +10,16 @@ namespace Ma.Terminal.SelfService.ViewModel
 
         public string ErrorType { get; set; }
 
+        string _errMsg;
+        public string ErrMsg
+        {
+            get { return _errMsg; }
+            set
+            {
+                SetProperty(ref _errMsg, value);
+            }
+        }
+
         public override void Initialization()
         {
             Title = GetString("Query");

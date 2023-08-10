@@ -15,6 +15,7 @@ using System.Drawing.Printing;
 using System.Drawing;
 using System.IO;
 using System.Diagnostics;
+using Ma.Terminal.SelfService.Utils;
 
 namespace Ma.Terminal.SelfService.ViewModel
 {
@@ -34,16 +35,6 @@ namespace Ma.Terminal.SelfService.ViewModel
         public event CardPrintedHandler OnCardPrinted;
 
         public Action<IPageViewInterface> NavigationTo;
-
-        string _errMsg;
-        public string ErrMsg
-        {
-            get { return _errMsg; }
-            set
-            {
-                SetProperty(ref _errMsg, value);
-            }
-        }
 
         public WaitPageViewModel(Machine machine,
             Requester api,
@@ -87,6 +78,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                 if (!_reader.OpenCard(out _uid))
                 {
                     OnCardPrinted?.Invoke(false, _reader.LastError);
+                    _printer.ExitCard();
                     return;
                 }
 
@@ -97,6 +89,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                 if (openCardApdu == null)
                 {
                     OnCardPrinted?.Invoke(false, _api.LastMessage);
+                    _printer.ExitCard();
                     return;
                 }
 
@@ -111,6 +104,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                             item.Sws))
                     {
                         OnCardPrinted?.Invoke(false, _reader.LastError);
+                        _printer.ExitCard();
                         return;
                     }
 
@@ -132,6 +126,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                     {
                         isHasNext = false;
                         OnCardPrinted?.Invoke(false, _api.LastMessage);
+                        _printer.ExitCard();
                         return;
                     }
 
@@ -158,34 +153,11 @@ namespace Ma.Terminal.SelfService.ViewModel
 
                 _waitPrintImages.Clear();
 
-                var facePath = string.IsNullOrEmpty(model.CardFacePath) ? "pack://SiteOfOrigin:,,,/Resource/Image/Photo.png" : model.CardFacePath;
-                var backPath = string.IsNullOrEmpty(model.CardBackPath) ? "pack://SiteOfOrigin:,,,/Resource/Image/Photo.png" : model.CardBackPath;
+                var front = string.IsNullOrEmpty(model.CardFacePath) ? Image.FromFile($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Image\\Photo.png") : ImageUtils.GetBitmapFromUrl(model.CardFacePath);
+                var back = string.IsNullOrEmpty(model.CardBackPath) ? Image.FromFile($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Image\\Photo.png") : ImageUtils.GetBitmapFromUrl(model.CardBackPath);
 
-                var fontImage = BitmapFrame.Create(new Uri(facePath), BitmapCreateOptions.None, BitmapCacheOption.Default);
-                var backImage = BitmapFrame.Create(new Uri(backPath), BitmapCreateOptions.None, BitmapCacheOption.Default);
-
-                Image front = null;
-                Image back = null;
-
-                using (MemoryStream outStream = new MemoryStream())
-                {
-                    BitmapEncoder enc = new BmpBitmapEncoder();
-                    enc.Frames.Add(fontImage);
-                    enc.Save(outStream);
-                    front = new Bitmap(outStream);
-                    front.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                    front.Save($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Front.jpg");
-                }
-
-                using (MemoryStream outStream = new MemoryStream())
-                {
-                    BitmapEncoder enc = new BmpBitmapEncoder();
-                    enc.Frames.Add(backImage);
-                    enc.Save(outStream);
-                    back = new Bitmap(outStream);
-                    back.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                    back.Save($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Back.jpg");
-                }
+                front.Save($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Front.jpg");
+                back.Save($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Back.jpg");
 
                 _waitPrintImages.Enqueue(front);
                 _waitPrintImages.Enqueue(back);

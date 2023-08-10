@@ -68,6 +68,7 @@ namespace Ma.Terminal.SelfService.View
             _confirmPage.NextPageView = _waitPage;
             _waitPage.BackPageView = _confirmPage;
             _waitPage.NextPageView = _takePage;
+            _waitPage.ErrorPageView = _errorPage;
             _takePage.BackPageView = _mainPage;
             _takePage.NextPageView = _mainPage;
             _resetPage.BackPageView = _mainPage;

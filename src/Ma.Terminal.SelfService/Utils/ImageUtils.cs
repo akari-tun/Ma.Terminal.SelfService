@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
@@ -152,5 +154,28 @@ namespace Ma.Terminal.SelfService.Utils
             return bitmap;
         }
         #endregion
+
+        public static System.Drawing.Image GetBitmapFromUrl(string url)
+        {
+            Image img = null;
+
+            try
+            {
+                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+                using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                {
+                    using (Stream str = response.GetResponseStream())
+                    {
+                        img = Image.FromStream(str);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+
+            return img;
+        }
     }
 }

@@ -19,19 +19,22 @@ namespace Ma.Terminal.SelfService.View
     /// <summary>
     /// WaitPageView.xaml 的交互逻辑
     /// </summary>
-    public partial class WaitPageView : Page, IPageViewInterface, IBackspaceSupportView, INextPageSupportView
+    public partial class WaitPageView : Page, IPageViewInterface, IBackspaceSupportView, INextPageSupportView, IErrorPageSupportView
     {
         WaitPageViewModel _viewModel;
+        ErrorPageViewModel _errViewModel;
         public IViewModel ViewModel => _viewModel;
 
         public IPageViewInterface BackPageView { get; set; }
         public IPageViewInterface NextPageView { get; set; }
+        public IPageViewInterface ErrorPageView { get; set; }
 
         public WaitPageView()
         {
             InitializeComponent();
 
             _viewModel = Ioc.Default.GetRequiredService<WaitPageViewModel>();
+            _errViewModel = Ioc.Default.GetRequiredService<ErrorPageViewModel>();
             DataContext = _viewModel;
 
             _viewModel.OnCardPrinted += (r, m) =>
@@ -44,9 +47,9 @@ namespace Ma.Terminal.SelfService.View
                 {
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        _viewModel.ErrMsg = "制卡失败，请联系管理员！";
-                        WaitImage.Visibility = Visibility.Collapsed;
-                        ErrorMessage.Visibility = Visibility.Visible;
+                        _errViewModel.ErrMsg = "制卡失败，请联系管理员！";
+                        _errViewModel.ErrorType = "ErrorMessage";
+                        _viewModel.NavigationTo(ErrorPageView);
                     }));
                 }
             };
@@ -58,7 +61,6 @@ namespace Ma.Terminal.SelfService.View
             _viewModel.Initialization();
             _viewModel.NavigationTo = navigationParent.NavigationTo;
             WaitImage.Visibility = Visibility.Visible;
-            ErrorMessage.Visibility = Visibility.Collapsed;
             return this;
         }
 

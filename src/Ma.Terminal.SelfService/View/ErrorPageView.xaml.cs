@@ -30,14 +30,14 @@ namespace Ma.Terminal.SelfService.View
         {
             InitializeComponent();
 
-
             _viewModel = Ioc.Default.GetRequiredService<ErrorPageViewModel>();
             DataContext = _viewModel;
 
             Title.OnBackspaceClick += () => _viewModel.NavigationTo(BackPageView);
 
-            NoCard.Visibility = Visibility.Visible;
+            NoCard.Visibility = Visibility.Collapsed;
             HaveCard.Visibility = Visibility.Collapsed;
+            ErrorMessage.Visibility = Visibility.Collapsed;
         }
 
         public IPageViewInterface Init(INavigationSupport navigationParent)
@@ -52,9 +52,11 @@ namespace Ma.Terminal.SelfService.View
             Ioc.Default.GetRequiredService<ErrorPageViewModel>();
             NoCard.Visibility = Visibility.Collapsed;
             HaveCard.Visibility = Visibility.Collapsed;
+            ErrorMessage.Visibility = Visibility.Collapsed;
 
             if (NoCard.Name == _viewModel.ErrorType) NoCard.Visibility = Visibility.Visible;
             if (HaveCard.Name == _viewModel.ErrorType) HaveCard.Visibility = Visibility.Visible;
+            if (ErrorMessage.Name == _viewModel.ErrorType) HaveCard.Visibility = Visibility.Visible;
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Ma.Terminal.SelfService.View
     /// <summary>
     /// QueryPage.xaml 的交互逻辑
     /// </summary>
-    public partial class QueryPageView : Page, IPageViewInterface, IBackspaceSupportView, INextPageSupportView
+    public partial class QueryPageView : Page, IPageViewInterface, IBackspaceSupportView, INextPageSupportView, IErrorPageSupportView
     {
         QueryPageViewModel _viewModel;
         public IViewModel ViewModel => _viewModel;

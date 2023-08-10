@@ -87,13 +87,6 @@ namespace Ma.Terminal.SelfService.ViewModel
 
             FontImage = BitmapFrame.Create(new Uri(facePath), BitmapCreateOptions.None, BitmapCacheOption.Default);
             BackImage = BitmapFrame.Create(new Uri(backPath), BitmapCreateOptions.None, BitmapCacheOption.Default);
-
-            var front = ImageUtils.ImageSourceToBitmap(FontImage);
-            var back = ImageUtils.ImageSourceToBitmap(BackImage);
-
-            front.Save($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Front.jpg");
-            back.Save($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Back.jpg");
-
         }
     }
 }
