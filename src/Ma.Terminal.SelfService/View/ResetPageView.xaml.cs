@@ -2,9 +2,11 @@
 using Ma.Terminal.SelfService.Controls;
 using Ma.Terminal.SelfService.Model;
 using Ma.Terminal.SelfService.ViewModel;
+using Ma.Terminal.SelfService.WebApi;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -25,6 +27,7 @@ namespace Ma.Terminal.SelfService.View
         Machine _machine;
         ItemsConfig _config;
         ResetPageViewModel _viewModel;
+        private Requester _api;
         public IViewModel ViewModel => _viewModel;
 
         public IPageViewInterface BackPageView { get; set; }
@@ -33,6 +36,7 @@ namespace Ma.Terminal.SelfService.View
         {
             InitializeComponent();
 
+            _api = Ioc.Default.GetRequiredService<Requester>(); ;
             _viewModel = Ioc.Default.GetRequiredService<ResetPageViewModel>();
             _machine = Ioc.Default.GetRequiredService<Machine>();
             _config = Ioc.Default.GetRequiredService<ItemsConfig>();
@@ -65,6 +69,14 @@ namespace Ma.Terminal.SelfService.View
             _machine.Detail.CardCount = _config.Card.ToString();
             _viewModel.CardSurplus = _machine.Detail.CardCount;
 
+            Task.Run(async () =>
+            {
+                await _api.SaveMachine(_machine.MachineNo,
+                                       _machine.Detail.CardCount,
+                                       _machine.Detail.InkCount,
+                                       _machine.Detail.CardRopeCover);
+            });
+
             _config.Save();
         }
 
@@ -74,6 +86,14 @@ namespace Ma.Terminal.SelfService.View
             _machine.Detail.InkCount = _config.Ink.ToString();
             _viewModel.InkSurplus = _machine.Detail.InkCount;
 
+            Task.Run(async () =>
+            {
+                await _api.SaveMachine(_machine.MachineNo,
+                                       _machine.Detail.CardCount,
+                                       _machine.Detail.InkCount,
+                                       _machine.Detail.CardRopeCover);
+            });
+
             _config.Save();
         }
 
@@ -82,6 +102,14 @@ namespace Ma.Terminal.SelfService.View
             _config.Lanyard = _machine.MaxLanyard;
             _machine.Detail.CardRopeCover = _config.Lanyard.ToString();
             _viewModel.LanyardSurplus = _machine.Detail.CardRopeCover;
+
+            Task.Run(async () =>
+            {
+                await _api.SaveMachine(_machine.MachineNo,
+                                       _machine.Detail.CardCount,
+                                       _machine.Detail.InkCount,
+                                       _machine.Detail.CardRopeCover);
+            });
 
             _config.Save();
         }
