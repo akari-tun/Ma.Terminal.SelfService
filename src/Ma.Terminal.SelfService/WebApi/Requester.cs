@@ -154,7 +154,7 @@ namespace Ma.Terminal.SelfService.WebApi
             return null;
         }
 
-        public async Task<string> Finish(
+        public async Task<bool> Finish(
             string orderId,
             string userId,
             string uid,
@@ -183,7 +183,7 @@ namespace Ma.Terminal.SelfService.WebApi
                 if (entity != null)
                 {
                     LastMessage = entity.Msg;
-                    return entity.Data;
+                    return entity.Code == 0;
                 }
             }
             else
@@ -192,7 +192,7 @@ namespace Ma.Terminal.SelfService.WebApi
                 Debug.WriteLine($"Response --> {LastMessage}");
             }
 
-            return null;
+            return false;
         }
 
         public async Task<string> SaveMachine(

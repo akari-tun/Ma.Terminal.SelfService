@@ -213,23 +213,24 @@ namespace Ma.Terminal.SelfService.ViewModel
             await Task.Run(() => _lanyard.RollLanyard(_machine.MaxLanyard - _config.Lanyard, model.OrderId));
             await Task.Run(() => _light.Light(_machine.MaxLanyard - _config.Lanyard));
 
-            var result = await _api.Finish(model.OrderId,
-                model.UserId,
-                FunTools.BytesToHexStr(_uid),
-                _machine.MachineNo);
+            if (await _api.Finish(model.OrderId,
+                                  model.UserId,
+                                  FunTools.BytesToHexStr(_uid),
+                                  _machine.MachineNo))
+            {
+                await _api.SaveMachine(_machine.MachineNo,
+                                       _machine.Detail.CardCount,
+                                       _machine.Detail.InkCount,
+                                       _machine.Detail.CardRopeCover);
 
-            if (result == null)
+                OnCardPrinted?.Invoke(true, "制卡成功");
+            }
+            else
             {
                 OnCardPrinted?.Invoke(false, _api.LastMessage);
-                return;
             }
 
-            await _api.SaveMachine(_machine.MachineNo,
-                _machine.Detail.CardCount,
-                _machine.Detail.InkCount,
-                _machine.Detail.CardRopeCover);
-
-            OnCardPrinted?.Invoke(true, "制卡成功");
+            return;
         }
     }
 }
