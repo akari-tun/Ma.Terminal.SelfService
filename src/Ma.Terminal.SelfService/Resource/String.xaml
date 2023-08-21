@@ -24,6 +24,9 @@
     <!-- Take-->
     <system:String x:Key="Close">关闭</system:String>
 
+    <!-- Error-->
+    <system:String x:Key="Error">错误</system:String>
+
     <!-- Confirm-->
     <system:String x:Key="Name">姓名：</system:String>
     <system:String x:Key="IdNo">证件号：</system:String>

@@ -1,7 +1,7 @@
 {
   "MachineNo": "101",
   "ApiUrl": "http://ykttest.innoecos.cn:9001",
-  "PrinterName": "CX-7000 U1",
+  "PrinterName": "Microsoft Print to PDF",
   "LanyardPort": 11,
   "LanyardBaudrate": 115200,
   "LightPort": 1,

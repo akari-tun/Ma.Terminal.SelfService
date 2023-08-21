@@ -47,7 +47,7 @@ namespace Ma.Terminal.SelfService.View
                 {
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        _errViewModel.ErrMsg = "制卡失败，请联系管理员！";
+                        _errViewModel.ErrMsg = $"制卡失败，{m}";
                         _errViewModel.ErrorType = "ErrorMessage";
                         _viewModel.NavigationTo(ErrorPageView);
                     }));
