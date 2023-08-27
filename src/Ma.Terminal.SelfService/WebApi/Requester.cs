@@ -1,6 +1,7 @@
 ﻿using Ma.Terminal.SelfService.Model;
 using Ma.Terminal.SelfService.Utils;
 using Ma.Terminal.SelfService.WebApi.Entities;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,6 +22,7 @@ namespace Ma.Terminal.SelfService.WebApi
 
         private Machine _machine;
         private JsonSerializerOptions _options;
+        Logger _logger = LogManager.GetCurrentClassLogger();
 
         public string LastMessage { get; set; }
 
@@ -35,7 +37,10 @@ namespace Ma.Terminal.SelfService.WebApi
 
         public async Task<MachineDetailEntity> GetMachineDetail()
         {
-            var respone = await HttpUtility.HttpGetResponseAsync(string.Format($"{_machine.ApiUrl}{MACHINE_DETAIL}", _machine.MachineNo),
+            var url = string.Format($"{_machine.ApiUrl}{MACHINE_DETAIL}", _machine.MachineNo);
+            _logger.Trace($"Request {url} -> {_machine.MachineNo}");
+
+            var respone = await HttpUtility.HttpGetResponseAsync(url,
                 10000,
                 Encoding.UTF8);
 
@@ -43,10 +48,23 @@ namespace Ma.Terminal.SelfService.WebApi
             {
                 var content = await respone.Content.ReadAsStringAsync();
 
-                Debug.WriteLine($"Response --> {content}");
+                _logger.Trace($"Response {url} -> {content}");
 
                 var entity = JsonSerializer.Deserialize<ApiRespone<MachineDetailEntity>>(content, _options);
-                if (entity != null) return entity.Data;
+                if (entity != null)
+                {
+                    LastMessage = entity.Msg;
+                    return entity.Data;
+                }
+                else
+                {
+                    LastMessage = $"后台接口返回数据解析失败。";
+                }
+            }
+            else
+            {
+                _logger.Trace($"Response {url} -> StatusCode:{respone.StatusCode}");
+                LastMessage = $"后台服务请求失败，返回码：[{respone.StatusCode}]";
             }
 
             return null;
@@ -54,8 +72,12 @@ namespace Ma.Terminal.SelfService.WebApi
 
         public async Task<UserDetail> OpenCardUserDetail(string phoneNumber, string pickupCode)
         {
+            var url = $"{_machine.ApiUrl}{OPEN_CARD_USER_DETAIL}";
+            var para = JsonSerializer.Serialize(new { PhoneNumber = phoneNumber, PickupCode = pickupCode, MachineNo = _machine.MachineNo }, _options);
+            _logger.Trace($"Request {url} -> {para}");
+
             var respone = await HttpUtility.HttpPostResponseAsync($"{_machine.ApiUrl}{OPEN_CARD_USER_DETAIL}",
-                JsonSerializer.Serialize(new { PhoneNumber = phoneNumber, PickupCode = pickupCode, MachineNo = _machine.MachineNo }, _options),
+                para,
                 10000,
                 Encoding.UTF8,
                 "application/json");
@@ -64,7 +86,7 @@ namespace Ma.Terminal.SelfService.WebApi
             {
                 var content = await respone.Content.ReadAsStringAsync();
 
-                Debug.WriteLine($"Response --> {content}");
+                _logger.Trace($"Response {url} -> {content}");
 
                 var entity = JsonSerializer.Deserialize<ApiRespone<UserDetail>>(content, _options);
                 if (entity != null)
@@ -72,9 +94,14 @@ namespace Ma.Terminal.SelfService.WebApi
                     LastMessage = entity.Msg;
                     return entity.Data;
                 }
+                else
+                {
+                    LastMessage = $"后台接口返回数据解析失败。";
+                }
             }
             else
             {
+                _logger.Info($"Response {url} -> StatusCode:{respone.StatusCode}");
                 LastMessage = $"调用用户信息接口失败，HttpCode [{respone.StatusCode}]。";
             }
 
@@ -83,8 +110,12 @@ namespace Ma.Terminal.SelfService.WebApi
 
         public async Task<OpenCardApdu> OpenCardApdu(string orderId, string userId, string uid)
         {
+            var url = $"{_machine.ApiUrl}{GET_OPEN_CARD_APDU}";
+            var para = JsonSerializer.Serialize(new { OrderId = orderId, UserId = userId, Uid = uid }, _options);
+            _logger.Trace($"Request {url} -> {para}");
+
             var respone = await HttpUtility.HttpPostResponseAsync($"{_machine.ApiUrl}{GET_OPEN_CARD_APDU}",
-                JsonSerializer.Serialize(new { OrderId = orderId, UserId = userId, Uid = uid }, _options),
+                para,
                 10000,
                 Encoding.UTF8,
                 "application/json");
@@ -93,7 +124,7 @@ namespace Ma.Terminal.SelfService.WebApi
             {
                 var content = await respone.Content.ReadAsStringAsync();
 
-                Debug.WriteLine($"Response --> {content}");
+                _logger.Trace($"Response {url} -> {content}");
 
                 var entity = JsonSerializer.Deserialize<ApiRespone<OpenCardApdu>>(content, _options);
                 if (entity != null)
@@ -101,11 +132,15 @@ namespace Ma.Terminal.SelfService.WebApi
                     LastMessage = entity.Msg;
                     return entity.Data;
                 }
+                else
+                {
+                    LastMessage = $"后台接口返回数据解析失败。";
+                }
             }
             else
             {
+                _logger.Trace($"Response {url} -> StatusCode:{respone.StatusCode}");
                 LastMessage = $"调用开卡指令获取接口失败，HttpCode [{respone.StatusCode}]。";
-                Debug.WriteLine($"Response --> {LastMessage}");
             }
 
             return null;
@@ -118,16 +153,20 @@ namespace Ma.Terminal.SelfService.WebApi
             string userId,
             string uid)
         {
-            var respone = await HttpUtility.HttpPostResponseAsync($"{_machine.ApiUrl}{APDU_EXE_RESULT}",
-                JsonSerializer.Serialize(
-                    new 
-                    { 
+            var url = $"{_machine.ApiUrl}{APDU_EXE_RESULT}";
+            var para = JsonSerializer.Serialize(
+                    new
+                    {
                         ApduIndex = apduIndex,
                         Rapdu = rapdu,
                         Result = result,
                         UserId = userId,
                         Uid = uid
-                    }, _options),
+                    }, _options);
+            _logger.Trace($"Request {url} -> {para}");
+
+            var respone = await HttpUtility.HttpPostResponseAsync($"{_machine.ApiUrl}{APDU_EXE_RESULT}",
+                para,
                 10000,
                 Encoding.UTF8,
                 "application/json");
@@ -136,7 +175,7 @@ namespace Ma.Terminal.SelfService.WebApi
             {
                 var content = await respone.Content.ReadAsStringAsync();
 
-                Debug.WriteLine($"Response --> {content}");
+                _logger.Trace($"Response {url} -> {content}");
 
                 var entity = JsonSerializer.Deserialize<ApiRespone<ApduExeResult>>(content, _options);
                 if (entity != null)
@@ -144,11 +183,15 @@ namespace Ma.Terminal.SelfService.WebApi
                     LastMessage = entity.Msg;
                     return entity.Data;
                 }
+                else
+                {
+                    LastMessage = $"后台接口返回数据解析失败。";
+                }
             }
             else
             {
+                _logger.Trace($"Response {url} -> StatusCode:{respone.StatusCode}");
                 LastMessage = $"调用开卡指令后续接口失败，HttpCode [{respone.StatusCode}]。";
-                Debug.WriteLine($"Response --> {LastMessage}");
             }
 
             return null;
@@ -160,6 +203,17 @@ namespace Ma.Terminal.SelfService.WebApi
             string uid,
             string machineNo)
         {
+            var url = $"{_machine.ApiUrl}{FINISH}";
+            var para = JsonSerializer.Serialize(
+                        new
+                        {
+                            OrderId = orderId,
+                            UserId = userId,
+                            Uid = uid,
+                            MachineNo = machineNo
+                        }, _options);
+            _logger.Trace($"Request {url} -> {para}");
+
             var respone = await HttpUtility.HttpPostResponseAsync($"{_machine.ApiUrl}{FINISH}",
                 JsonSerializer.Serialize(
                     new
@@ -177,7 +231,7 @@ namespace Ma.Terminal.SelfService.WebApi
             {
                 var content = await respone.Content.ReadAsStringAsync();
 
-                Debug.WriteLine($"Response --> {content}");
+                _logger.Trace($"Response {url} -> {content}");
 
                 var entity = JsonSerializer.Deserialize<ApiRespone<string>>(content, _options);
                 if (entity != null)
@@ -185,11 +239,15 @@ namespace Ma.Terminal.SelfService.WebApi
                     LastMessage = entity.Msg;
                     return entity.Code == 0;
                 }
+                else
+                {
+                    LastMessage = $"后台接口返回数据解析失败。";
+                }
             }
             else
             {
+                _logger.Trace($"Response {url} -> StatusCode:{respone.StatusCode}");
                 LastMessage = $"调用制卡完成通知接口失败，HttpCode [{respone.StatusCode}]。";
-                Debug.WriteLine($"Response --> {LastMessage}");
             }
 
             return false;
@@ -201,6 +259,17 @@ namespace Ma.Terminal.SelfService.WebApi
             string inkCount,
             string cardRopeCover)
         {
+            var url = $"{_machine.ApiUrl}{SAVE_MACHINE}";
+            var para = JsonSerializer.Serialize(
+                    new
+                    {
+                        MachineNo = machineNo,
+                        CardCount = cardCount,
+                        InkCount = inkCount,
+                        CardRopeCover = cardRopeCover
+                    }, _options);
+            _logger.Trace($"Request {url} -> {para}");
+
             var respone = await HttpUtility.HttpPostResponseAsync($"{_machine.ApiUrl}{SAVE_MACHINE}",
                 JsonSerializer.Serialize(
                     new
@@ -218,7 +287,7 @@ namespace Ma.Terminal.SelfService.WebApi
             {
                 var content = await respone.Content.ReadAsStringAsync();
 
-                Debug.WriteLine($"Response --> {content}");
+                _logger.Trace($"Response {url} -> {content}");
 
                 var entity = JsonSerializer.Deserialize<ApiRespone<string>>(content, _options);
                 if (entity != null)
@@ -226,11 +295,15 @@ namespace Ma.Terminal.SelfService.WebApi
                     LastMessage = entity.Msg;
                     return entity.Data;
                 }
+                else
+                {
+                    LastMessage = $"后台接口返回数据解析失败。";
+                }
             }
             else
             {
+                _logger.Trace($"Response {url} -> StatusCode:{respone.StatusCode}");
                 LastMessage = $"调用制卡机信息同步接口失败，HttpCode [{respone.StatusCode}]。";
-                Debug.WriteLine($"Response --> {LastMessage}");
             }
 
             return null;

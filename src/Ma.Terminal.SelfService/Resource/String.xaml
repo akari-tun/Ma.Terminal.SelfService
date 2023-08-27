@@ -9,8 +9,9 @@
     <system:String x:Key="QrCodeDescript">扫码下载i友未来社区APP</system:String>
     <system:String x:Key="PhoneDescript">客服热线：4000-1000-33</system:String>
     <system:String x:Key="NoServiceDescript">非常抱歉，本机暂停服务！</system:String>
+    <system:String x:Key="NoMaterial">耗材耗尽，本机暂停服务！</system:String>
+    <system:String x:Key="Loading">加载中，请稍后...</system:String>
     
-    <!-- Flow-->
     <system:String x:Key="Query">查询</system:String>
     <system:String x:Key="ConfirmInfo">确认信息</system:String>
     <system:String x:Key="WaitCard">等待制卡</system:String>
@@ -36,10 +37,13 @@
     <system:String x:Key="Confirmed">已确认，下一步</system:String>
 
     <!-- Reset-->
-    <system:String x:Key="CardSurplus">剩余卡片</system:String>
-    <system:String x:Key="InkSurplus">剩余墨水</system:String>
-    <system:String x:Key="LanyardSurplus">剩余挂绳</system:String>
-    <system:String x:Key="Reset">重置</system:String>
+    <system:String x:Key="CardSurplus">剩余卡片数量</system:String>
+    <system:String x:Key="InkSurplus">剩余墨水数量</system:String>
+    <system:String x:Key="LanyardSurplus">剩余挂绳数量</system:String>
+    <system:String x:Key="Config">设置</system:String>
+    <system:String x:Key="SetFull">加满</system:String>
+    <system:String x:Key="Cancel">取消</system:String>
+    <system:String x:Key="Enter">确定</system:String>
 
     <!-- InputPwd-->
     <system:String x:Key="CheckPwd">验证密码</system:String>

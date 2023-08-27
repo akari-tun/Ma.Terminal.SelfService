@@ -14,13 +14,15 @@
             <RowDefinition Height="24*"/>
             <RowDefinition Height="200*"/>
             <RowDefinition Height="69*"/>
-            <RowDefinition Height="730*"/>
-            <RowDefinition Height="97*"/>
+            <RowDefinition Height="880*"/>
+            <RowDefinition Height="40*"/>
             <RowDefinition Height="160*"/>
-            <RowDefinition Height="327*"/>
+            <RowDefinition Height="226*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
-            <controls:TitleControl x:Name="Title" Title="{Binding Title, Mode=OneWay}"/>
+            <controls:TitleControl x:Name="Title"
+                                   Title="{Binding Title, Mode=OneWay}"
+                                   IsAllowBack="{Binding IsAllowBack, Mode=OneWay}"/>
         </Grid>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
@@ -49,11 +51,11 @@
                         <RowDefinition Height="50*"/>
                         <RowDefinition Height="50*"/>
                         <RowDefinition Height="50*"/>
-                        <RowDefinition Height="60*"/>
-                        <RowDefinition Height="180*"/>
-                        <RowDefinition Height="24*"/>
-                        <RowDefinition Height="36*"/>
                         <RowDefinition Height="40*"/>
+                        <RowDefinition Height="322*"/>
+                        <RowDefinition Height="50*"/>
+                        <RowDefinition Height="36*"/>
+                        <RowDefinition Height="50*"/>
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
@@ -121,13 +123,13 @@
                     </Grid>
                     <Grid Grid.Row="9">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="161*"/>
-                            <ColumnDefinition Width="180*"/>
-                            <ColumnDefinition Width="4*"/>
-                            <ColumnDefinition Width="180*"/>
-                            <ColumnDefinition Width="24*"/>
-                            <ColumnDefinition Width="180*"/>
-                            <ColumnDefinition Width="161*"/>
+                            <ColumnDefinition Width="55*"/>
+                            <ColumnDefinition Width="205*"/>
+                            <ColumnDefinition Width="13*"/>
+                            <ColumnDefinition Width="205*"/>
+                            <ColumnDefinition Width="16*"/>
+                            <ColumnDefinition Width="213*"/>
+                            <ColumnDefinition Width="55*"/>
                         </Grid.ColumnDefinitions>
                         <Viewbox Grid.Column="1">
                             <Image x:Name="Photo" Source="{Binding FontImage, Mode=OneWay}" />

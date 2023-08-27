@@ -5,6 +5,7 @@ using Ma.Terminal.SelfService.ViewModel;
 using Ma.Terminal.SelfService.WebApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -21,22 +22,28 @@ namespace Ma.Terminal.SelfService
     public partial class App : Application
     {
         private static System.Threading.Mutex mutex;
+        Logger _logger = LogManager.GetCurrentClassLogger();
 
         protected override void OnStartup(StartupEventArgs e)
         {
             mutex = new System.Threading.Mutex(true, "OnlyRun");
             if (mutex.WaitOne(0, false))
             {
+                _logger.Info($"App is OnStartup...");
                 base.OnStartup(e);
             }
             else
             {
+                _logger.Info($"App is running in anther thread!");
                 this.Shutdown();
             }
 
             ConfigurationBuilder cfgBuilder = new ConfigurationBuilder();
             cfgBuilder.AddJsonFile("machine.json", optional: false, reloadOnChange:false);
             IConfigurationRoot cfgRoot = cfgBuilder.Build();
+
+            var config = ItemsConfig.Read();
+            _logger.Info($"Material config loaded {config}");
 
             Ioc.Default.ConfigureServices(new ServiceCollection()
                 .AddSingleton(typeof(MainContainerViewModel))
@@ -68,9 +75,9 @@ namespace Ma.Terminal.SelfService
                     {
                         ProjectId = string.Empty,
                         Address = string.Empty,
-                        CardCount = "0",
-                        InkCount = "0",
-                        CardRopeCover = "0",
+                        CardCount = config.Card.ToString(),
+                        InkCount = config.Ink.ToString(),
+                        CardRopeCover = config.Lanyard.ToString(),
                         Status = 0
                     }
                 })
@@ -85,7 +92,7 @@ namespace Ma.Terminal.SelfService
                     Port = int.Parse(cfgRoot.GetSection("LightPort").Value),
                     Baudrate = int.Parse(cfgRoot.GetSection("LightBaudrate").Value)
                 })
-                .AddSingleton(ItemsConfig.Read())
+                .AddSingleton(config)
                 .BuildServiceProvider());
 
             var path = $"pack://application:,,,/Resource/String.xaml";
@@ -94,6 +101,14 @@ namespace Ma.Terminal.SelfService
 
             Ioc.Default.GetRequiredService<Device.Lanyard.Operator>().Init();
             Ioc.Default.GetRequiredService<Device.Light.Operator>().Init();
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            var model = Ioc.Default.GetRequiredService<MainContainerViewModel>();
+            model.IsCheckRunning = false;
+
+            base.OnExit(e);
         }
     }
 }

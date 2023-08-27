@@ -74,6 +74,7 @@ namespace Ma.Terminal.SelfService.ViewModel
         public override void Initialization()
         {
             Title = GetString("ConfirmInfo");
+            IsAllowBack = true;
 
             var model = Ioc.Default.GetRequiredService<UserModel>();
 

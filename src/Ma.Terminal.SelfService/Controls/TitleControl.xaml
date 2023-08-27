@@ -4,14 +4,24 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Ma.Terminal.SelfService.Controls"
+             xmlns:converter="clr-namespace:Ma.Terminal.SelfService.Utils.Converter"
              mc:Ignorable="d" 
              d:DesignHeight="188" d:DesignWidth="1080">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <converter:BoolToReverseConverter x:Key="BoolToReverseConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="160*"/>
             <ColumnDefinition Width="920*"/>
         </Grid.ColumnDefinitions>
-        <local:ClickEffectGrid Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" OnClick="ClickEffectGrid_OnClick" Background="#00FFFFFF">
+        <local:ClickEffectGrid Grid.Column="0" Grid.Row="0" Grid.RowSpan="3"
+                               Visibility="{Binding Path=IsAllowBack, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                               Background="#00FFFFFF"
+                               OnClick="ClickEffectGrid_OnClick">
             <Grid.RowDefinitions>
                 <RowDefinition Height="73*"/>
                 <RowDefinition Height="42*"/>

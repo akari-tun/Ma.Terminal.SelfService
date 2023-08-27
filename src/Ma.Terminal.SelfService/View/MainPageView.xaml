@@ -5,15 +5,20 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ma.Terminal.SelfService.View"
       xmlns:controls="clr-namespace:Ma.Terminal.SelfService.Controls"
+      xmlns:converter="clr-namespace:Ma.Terminal.SelfService.Utils.Converter"
       mc:Ignorable="d" 
       d:DesignHeight="1795" d:DesignWidth="1080"
       Title="MainPage">
+    <Page.Resources>
+        <ResourceDictionary>
+            <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <converter:BoolToReverseConverter x:Key="BoolToReverseConverter" />
+        </ResourceDictionary>
+    </Page.Resources>
     <Grid Background="#F8F8F8" >
         <Grid.RowDefinitions>
             <RowDefinition Height="541*"/>
-            <RowDefinition Height="160*"/>
-            <RowDefinition Height="520*"/>
-            <RowDefinition Height="400*"/>
+            <RowDefinition Height="1080*"/>
             <RowDefinition Height="126*"/>
             <RowDefinition Height="48*"/>
         </Grid.RowDefinitions>
@@ -37,86 +42,122 @@
                 </Viewbox>
             </Grid>
         </Grid>
-        <Viewbox Grid.Row="1"/>
-        <Grid Grid.Row="2">
+        <Grid x:Name="ButtonGrid" Grid.Row="1" Visibility="{Binding Path=IsServiceAvailable, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="230*"/>
-                <RowDefinition Height="60*"/>
-                <RowDefinition Height="230*"/>
+                <RowDefinition Height="160*" />
+                <RowDefinition Height="520*" />
+                <RowDefinition Height="400*" />
+            </Grid.RowDefinitions>
+            <Viewbox Grid.Row="0"/>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="230*"/>
+                    <RowDefinition Height="60*"/>
+                    <RowDefinition Height="230*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="57*"/>
+                    <ColumnDefinition Width="966*"/>
+                    <ColumnDefinition Width="57*"/>
+                </Grid.ColumnDefinitions>
+                <controls:ClickEffectGrid x:Name="InitCard" Grid.Row="0" Grid.Column="1"
+                                          IsEnabled="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource BoolToReverseConverter}}">
+                    <Viewbox>
+                        <Image Source="pack://SiteOfOrigin:,,,/Resource/Image/IssueCard.png" />
+                    </Viewbox>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="53*"/>
+                            <RowDefinition Height="72*"/>
+                            <RowDefinition Height="36*"/>
+                            <RowDefinition Height="46*"/>
+                            <RowDefinition Height="53*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="41*"/>
+                            <ColumnDefinition Width="925*"/>
+                        </Grid.ColumnDefinitions>
+                        <Viewbox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left">
+                            <TextBlock Text="{StaticResource IssueCard}"
+                                   Foreground="#303241"
+                                   FontWeight="Bold"/>
+                        </Viewbox>
+                        <Viewbox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left">
+                            <TextBlock Text="{StaticResource IssueCardDescript}"
+                                   Foreground="#6E7580"
+                                   FontWeight="Normal"/>
+                        </Viewbox>
+                    </Grid>
+                </controls:ClickEffectGrid>
+                <controls:ClickEffectGrid x:Name="ReCard" Grid.Row="2" Grid.Column="1"
+                                          IsEnabled="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource BoolToReverseConverter}}">
+                    <Viewbox>
+                        <Image Source="pack://SiteOfOrigin:,,,/Resource/Image/ReCard.png" />
+                    </Viewbox>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="53*"/>
+                            <RowDefinition Height="72*"/>
+                            <RowDefinition Height="36*"/>
+                            <RowDefinition Height="46*"/>
+                            <RowDefinition Height="53*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="41*"/>
+                            <ColumnDefinition Width="925*"/>
+                        </Grid.ColumnDefinitions>
+                        <Viewbox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left">
+                            <TextBlock Text="{StaticResource ReCard}"
+                                   Foreground="#303241"
+                                   FontWeight="Bold"/>
+                        </Viewbox>
+                        <Viewbox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left">
+                            <TextBlock Text="{StaticResource ReCardDescript}"
+                                   Foreground="#6E7580"
+                                   FontWeight="Normal"/>
+                        </Viewbox>
+                    </Grid>
+                </controls:ClickEffectGrid>
+            </Grid>
+            <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80*"/>
+                    <RowDefinition Height="50*"/>
+                    <RowDefinition Height="130*"/>
+                </Grid.RowDefinitions>
+                <Viewbox Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="{StaticResource Loading}" Visibility="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                </Viewbox>
+            </Grid>
+        </Grid>
+        <Grid x:Name="ErrorGrid" Grid.Row="1"  Visibility="{Binding Path=IsServiceAvailable, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=false}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="46*" />
+                <RowDefinition Height="818*" />
+                <RowDefinition Height="216*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="57*"/>
-                <ColumnDefinition Width="966*"/>
-                <ColumnDefinition Width="57*"/>
+                <ColumnDefinition Width="131*" />
+                <ColumnDefinition Width="818*" />
+                <ColumnDefinition Width="131*" />
             </Grid.ColumnDefinitions>
-            <controls:ClickEffectGrid x:Name="InitCard" Grid.Row="0" Grid.Column="1">
-                <Viewbox>
-                    <Image Source="pack://SiteOfOrigin:,,,/Resource/Image/IssueCard.png" />
+            <Grid Grid.Row="1" Grid.Column="1">
+                <Viewbox x:Name="WaitImage" Grid.Row="1" Grid.Column="1">
+                    <Image Source="pack://SiteOfOrigin:,,,/Resource/Image/StopService.png" />
                 </Viewbox>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="53*"/>
-                        <RowDefinition Height="72*"/>
-                        <RowDefinition Height="36*"/>
-                        <RowDefinition Height="46*"/>
-                        <RowDefinition Height="53*"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="41*"/>
-                        <ColumnDefinition Width="925*"/>
-                    </Grid.ColumnDefinitions>
-                    <Viewbox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left">
-                        <TextBlock Text="{StaticResource IssueCard}"
-                                   Foreground="#303241"
-                                   FontWeight="Bold"/>
-                    </Viewbox>
-                    <Viewbox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left">
-                        <TextBlock Text="{StaticResource IssueCardDescript}"
-                                   Foreground="#6E7580"
-                                   FontWeight="Normal"/>
-                    </Viewbox>
-                </Grid>
-            </controls:ClickEffectGrid>
-            <controls:ClickEffectGrid x:Name="ReCard" Grid.Row="2" Grid.Column="1">
-                <Viewbox>
-                    <Image Source="pack://SiteOfOrigin:,,,/Resource/Image/ReCard.png" />
+            </Grid>
+            <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50*"/>
+                    <RowDefinition Height="50*"/>
+                    <RowDefinition Height="100*"/>
+                </Grid.RowDefinitions>
+                <Viewbox Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock x:Name="ErrorMsg" Foreground="Red" Text="{Binding Path=Error, Mode=OneWay}" />
                 </Viewbox>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="53*"/>
-                        <RowDefinition Height="72*"/>
-                        <RowDefinition Height="36*"/>
-                        <RowDefinition Height="46*"/>
-                        <RowDefinition Height="53*"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="41*"/>
-                        <ColumnDefinition Width="925*"/>
-                    </Grid.ColumnDefinitions>
-                    <Viewbox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left">
-                        <TextBlock Text="{StaticResource ReCard}"
-                                   Foreground="#303241"
-                                   FontWeight="Bold"/>
-                    </Viewbox>
-                    <Viewbox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left">
-                        <TextBlock Text="{StaticResource ReCardDescript}"
-                                   Foreground="#6E7580"
-                                   FontWeight="Normal"/>
-                    </Viewbox>
-                </Grid>
-            </controls:ClickEffectGrid>
+            </Grid>
         </Grid>
-        <Grid Grid.Row="3">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="175*"/>
-                <RowDefinition Height="50*"/>
-                <RowDefinition Height="175*"/>
-            </Grid.RowDefinitions>
-            <Viewbox Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <TextBlock x:Name="ErrorMsg" Foreground="Red" />
-            </Viewbox>
-        </Grid>
-        <Grid Grid.Row="4">
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="185*"/>
                 <ColumnDefinition Width="126*"/>

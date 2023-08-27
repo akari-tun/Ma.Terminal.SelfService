@@ -4,6 +4,7 @@ using Ma.Terminal.SelfService.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -74,6 +75,11 @@ namespace Ma.Terminal.SelfService.View
             _resetPage.BackPageView = _mainPage;
             _inputPwdPage.NextPageView = _resetPage;
             _inputPwdPage.BackPageView = _mainPage;
+
+            Task.Run(async () =>
+            {
+                await _viewModel.CheckStatus();
+            });
         }
 
         private void MainContainerView_Loaded(object sender, RoutedEventArgs e)
@@ -83,14 +89,20 @@ namespace Ma.Terminal.SelfService.View
 
         private void ExitClick(ClickEffectGrid sender)
         {
-            _inputPwdPage.ActionType = InputPwdPageView.ActionTypeEnum.EXIT;
-            _viewModel.NavigationTo(_inputPwdPage);
+            if (_viewModel.CurrentPageView.Equals(_mainPage))
+            {
+                _inputPwdPage.ActionType = InputPwdPageView.ActionTypeEnum.EXIT;
+                _viewModel.NavigationTo(_inputPwdPage);
+            }
         }
 
         private void ResetClick(ClickEffectGrid sender)
         {
-            _inputPwdPage.ActionType = InputPwdPageView.ActionTypeEnum.RESET;
-            _viewModel.NavigationTo(_inputPwdPage);
+            if (_viewModel.CurrentPageView.Equals(_mainPage))
+            {
+                _inputPwdPage.ActionType = InputPwdPageView.ActionTypeEnum.RESET;
+                _viewModel.NavigationTo(_inputPwdPage);
+            }
         }
     }
 }

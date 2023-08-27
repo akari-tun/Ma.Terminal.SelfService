@@ -1,4 +1,5 @@
 ﻿using Ma.Terminal.Utils;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,6 +12,7 @@ namespace Ma.Terminal.SelfService.Device.Reader
         const string DEV_NAME_STR = "USB1";
         StringBuilder DEV_NAME = new StringBuilder(DEV_NAME_STR);
         IntPtr _handler;
+        Logger _logger = LogManager.GetCurrentClassLogger();
 
         public string LastError { get; set; }
         public ReaderApi.StatusEnum Status { get; set; }
@@ -23,6 +25,7 @@ namespace Ma.Terminal.SelfService.Device.Reader
             if (_handler.ToInt32() <= 0)
             {
                 LastError = "读卡器打开失败！";
+                _logger.Error(LastError);
                 return false;
             }
 
@@ -31,6 +34,7 @@ namespace Ma.Terminal.SelfService.Device.Reader
             if (Status != ReaderApi.StatusEnum.IFD_OK)
             {
                 LastError = "设置为A卡模式失败";
+                _logger.Error(LastError);
                 return false;
             }
 
@@ -38,6 +42,7 @@ namespace Ma.Terminal.SelfService.Device.Reader
             if (Status != ReaderApi.StatusEnum.IFD_OK)
             {
                 LastError = "请求卡片失败";
+                _logger.Error(LastError);
                 return false;
             }
             
@@ -45,6 +50,7 @@ namespace Ma.Terminal.SelfService.Device.Reader
             if (Status != ReaderApi.StatusEnum.IFD_OK)
             {
                 LastError = "防碰撞失败";
+                _logger.Error(LastError);
                 return false;
             }
 
@@ -52,6 +58,7 @@ namespace Ma.Terminal.SelfService.Device.Reader
             if (Status != ReaderApi.StatusEnum.IFD_OK)
             {
                 LastError = "选卡失败";
+                _logger.Error(LastError);
                 return false;
             }
 
@@ -61,9 +68,11 @@ namespace Ma.Terminal.SelfService.Device.Reader
             {
                 Status = (ReaderApi.StatusEnum)len;
                 LastError = "非接上电失败";
+                _logger.Error(LastError);
                 return false;
             }
 
+            _logger.Trace($"Cpu card init success");
             LastError = "Cpu卡上电成功";
             return true;
         }
@@ -72,10 +81,12 @@ namespace Ma.Terminal.SelfService.Device.Reader
         {
             byte[] buff = new byte[255];
 
+            _logger.Trace($"apdu exec --> len:{cmd.Length} rsp:[{cmd}]");
             int len = ReaderApi.PICC_Reader_Application(_handler, cmd.Length, cmd, buff);
             if (len < 2)
             {
                 rsp = new byte[0];
+                _logger.Trace($"apdu result --> fail!");
                 LastError = "APDU命令执行失败";
                 return false;
             }
@@ -84,7 +95,8 @@ namespace Ma.Terminal.SelfService.Device.Reader
             Array.Copy(buff, rsp, len);
 
             string result = FunTools.BytesToHexStr(rsp, rsp.Length - 2, 2);
-            Debug.WriteLine($"apdu result --> len:{len} rsp:[{result}]");
+            _logger.Trace($"apdu result --> len:{len} rsp:[{result}]");
+
             bool ret = false;
 
             foreach (var item in sws)

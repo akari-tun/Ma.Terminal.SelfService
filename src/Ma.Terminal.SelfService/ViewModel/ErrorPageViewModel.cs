@@ -23,6 +23,7 @@ namespace Ma.Terminal.SelfService.ViewModel
         public override void Initialization()
         {
             Title = GetString("Error");
+            IsAllowBack = true;
         }
     }
 }

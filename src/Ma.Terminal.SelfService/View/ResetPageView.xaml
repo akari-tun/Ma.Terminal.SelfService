@@ -9,152 +9,69 @@
       d:DesignHeight="1795" d:DesignWidth="1080"
       Title="ResetPageView">
 
-    <Grid>
+    <Grid Background="#F8F8F8">
         <Grid.RowDefinitions>
             <RowDefinition Height="188*"/>
-            <RowDefinition Height="410*"/>
-            <RowDefinition Height="318*"/>
-            <RowDefinition Height="359*"/>
-            <RowDefinition Height="242*"/>
-            <RowDefinition Height="278*"/>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="320*"/>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="320*"/>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="320*"/>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="160*"/>
+            <RowDefinition Height="287*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
-            <controls:TitleControl x:Name="Title" Title="{Binding Title, Mode=OneWay}"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50*"/>
+            <ColumnDefinition Width="980*"/>
+            <ColumnDefinition Width="50*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Background="#FFFFFF">
+            <controls:TitleControl x:Name="Title"
+                                   Title="{Binding Title, Mode=OneWay}"
+                                   IsAllowBack="{Binding IsAllowBack, Mode=OneWay}"/>
         </Grid>
-        <Grid Grid.Row="2">
+        <controls:MaterialControl Grid.Row="2" Grid.Column="1" x:Name="Card"
+                                  Text="{StaticResource CardSurplus}"/>
+        <controls:MaterialControl Grid.Row="4" Grid.Column="1" x:Name="Ink"
+                                  Text="{StaticResource InkSurplus}"/>
+        <controls:MaterialControl Grid.Row="6" Grid.Column="1" x:Name="Lanyard"
+                                  Text="{StaticResource LanyardSurplus}"/>
+        <Grid Grid.Row="8" Grid.Column="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="135*"/>
-                <ColumnDefinition Width="310*"/>
-                <ColumnDefinition Width="135*"/>
+                <ColumnDefinition Width="465*" />
+                <ColumnDefinition Width="50*" />
+                <ColumnDefinition Width="465*" />
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="150*"/>
-                <RowDefinition Height="50*"/>
-                <RowDefinition Height="150*"/>
-                <RowDefinition Height="50*"/>
-                <RowDefinition Height="150*"/>
-            </Grid.RowDefinitions>
-            <Grid Grid.Column="1" Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="300*"/>
-                    <ColumnDefinition Width="30*"/>
-                    <ColumnDefinition Width="100*"/>
-                    <ColumnDefinition Width="30*"/>
-                    <ColumnDefinition Width="100*"/>
-                </Grid.ColumnDefinitions>
-                <Viewbox Grid.Column="0">
-                    <TextBlock Text="{StaticResource CardSurplus}" Grid.Column="0"
-                               FontWeight="Normal"
-                               Foreground="#6E7580"/>
-                </Viewbox>
-                <Viewbox Grid.Column="2">
-                    <TextBlock Text="{Binding CardSurplus}" Grid.Column="2"
-                               FontWeight="Normal"
-                               Foreground="#6E7580"/>
-                </Viewbox>
-                <Viewbox Grid.Column="4">
-                    <controls:ClickEffectGrid OnClick="ResetCard">
-                        <Border BorderBrush="Black" BorderThickness="1">
-                            <TextBlock Text="{StaticResource Reset}" Grid.Column="4" Margin="5"
-                                       FontWeight="Normal"
-                                       Foreground="#6E7580"/>
-                        </Border>
-                    </controls:ClickEffectGrid>
-                </Viewbox>
-            </Grid>
-            <Grid Grid.Column="1" Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="300*"/>
-                    <ColumnDefinition Width="30*"/>
-                    <ColumnDefinition Width="100*"/>
-                    <ColumnDefinition Width="30*"/>
-                    <ColumnDefinition Width="100*"/>
-                </Grid.ColumnDefinitions>
-                <Viewbox Grid.Column="0">
-                    <TextBlock Text="{StaticResource InkSurplus}" Grid.Column="0"
-                               FontWeight="Normal"
-                               Foreground="#6E7580"/>
-                </Viewbox>
-                <Viewbox Grid.Column="2">
-                    <TextBlock Text="{Binding InkSurplus}" Grid.Column="2"
-                               FontWeight="Normal"
-                               Foreground="#6E7580"/>
-                </Viewbox>
-                <Viewbox Grid.Column="4">
-                    <controls:ClickEffectGrid OnClick="ResetInk">
-                        <Border BorderBrush="Black" BorderThickness="1">
-                            <TextBlock Text="{StaticResource Reset}" Grid.Column="4" Margin="5"
-                                       FontWeight="Normal"
-                                       Foreground="#6E7580"/>
-                        </Border>
-                    </controls:ClickEffectGrid>
-                </Viewbox>
-            </Grid>
-            <Grid Grid.Column="1" Grid.Row="4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="300*"/>
-                    <ColumnDefinition Width="30*"/>
-                    <ColumnDefinition Width="100*"/>
-                    <ColumnDefinition Width="30*"/>
-                    <ColumnDefinition Width="100*"/>
-                </Grid.ColumnDefinitions>
-                <Viewbox Grid.Column="0">
-                    <TextBlock Text="{StaticResource LanyardSurplus}" Grid.Column="0"
-                               FontWeight="Normal"
-                               Foreground="#6E7580"/>
-                </Viewbox>
-                <Viewbox Grid.Column="2">
-                    <TextBlock Text="{Binding LanyardSurplus}" Grid.Column="2"
-                               FontWeight="Normal"
-                               Foreground="#6E7580"/>
-                </Viewbox>
-                <Viewbox Grid.Column="4">
-                    <controls:ClickEffectGrid OnClick="ResetLanyard">
-                        <Border BorderBrush="Black" BorderThickness="1">
-                            <TextBlock Text="{StaticResource Reset}" Grid.Column="4" Margin="5"
-                                       FontWeight="Normal"
-                                       Foreground="#6E7580"/>
-                        </Border>
-                    </controls:ClickEffectGrid>
-                </Viewbox>
-            </Grid>
-        </Grid>
-        <Grid Grid.Row="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="57*"/>
-                <ColumnDefinition Width="966*"/>
-                <ColumnDefinition Width="57*"/>
-            </Grid.ColumnDefinitions>
-            <Border Grid.Column="1" Background="#F5F6FA" CornerRadius="70">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="117*"/>
-                        <ColumnDefinition Width="180*"/>
-                        <ColumnDefinition Width="20*"/>
-                        <ColumnDefinition Width="649*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="31*"/>
-                        <RowDefinition Height="180*"/>
-                        <RowDefinition Height="31*"/>
-                    </Grid.RowDefinitions>
-                    <Viewbox Grid.Column="1" Grid.Row="1">
-                        <Image Source="pack://SiteOfOrigin:,,,/Resource/Image/QrCode.png" />
-                    </Viewbox>
-                    <Grid Grid.Column="3" Grid.Row="1">
+            <controls:ClickEffectGrid Grid.Column="0" x:Name="Cancel">
+                <Border Background="#FFFFFF" BorderBrush="#C9CED6" BorderThickness="1" CornerRadius="10">
+                    <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="60*"/>
-                            <RowDefinition Height="60*"/>
-                            <RowDefinition Height="60*"/>
+                            <RowDefinition Height="40*"/>
+                            <RowDefinition Height="50*"/>
+                            <RowDefinition Height="40*"/>
                         </Grid.RowDefinitions>
-                        <Viewbox Grid.Row="1" HorizontalAlignment="Left">
-                            <TextBlock Text="{StaticResource QrCodeDescript}"
-                                       Foreground="#6E7580"
-                                       FontWeight="Medium"/>
+                        <Viewbox Grid.Row="1">
+                            <TextBlock Text="{StaticResource Cancel}" Foreground="#0F1826" FontWeight="Bold"/>
                         </Viewbox>
                     </Grid>
-                </Grid>
-            </Border>
+                </Border>
+            </controls:ClickEffectGrid>
+            <controls:ClickEffectGrid Grid.Column="2" x:Name="Enter">
+                <Border Background="#FFC941" CornerRadius="10">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40*"/>
+                            <RowDefinition Height="50*"/>
+                            <RowDefinition Height="40*"/>
+                        </Grid.RowDefinitions>
+                        <Viewbox Grid.Row="1">
+                            <TextBlock Text="{StaticResource Enter}" Foreground="#0F1826" FontWeight="Bold"/>
+                        </Viewbox>
+                    </Grid>
+                </Border>
+            </controls:ClickEffectGrid>
         </Grid>
     </Grid>
 </Page>

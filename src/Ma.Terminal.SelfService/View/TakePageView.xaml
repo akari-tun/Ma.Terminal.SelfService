@@ -21,7 +21,9 @@
             <RowDefinition Height="327*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
-            <controls:TitleControl x:Name="Title" Title="{Binding Title, Mode=OneWay}"/>
+            <controls:TitleControl x:Name="Title"
+                                   Title="{Binding Title, Mode=OneWay}"
+                                   IsAllowBack="{Binding IsAllowBack, Mode=OneWay}"/>
         </Grid>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>

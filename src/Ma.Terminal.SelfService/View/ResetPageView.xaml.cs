@@ -3,6 +3,7 @@ using Ma.Terminal.SelfService.Controls;
 using Ma.Terminal.SelfService.Model;
 using Ma.Terminal.SelfService.ViewModel;
 using Ma.Terminal.SelfService.WebApi;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -28,6 +29,7 @@ namespace Ma.Terminal.SelfService.View
         ItemsConfig _config;
         ResetPageViewModel _viewModel;
         private Requester _api;
+        Logger _logger = LogManager.GetCurrentClassLogger();
         public IViewModel ViewModel => _viewModel;
 
         public IPageViewInterface BackPageView { get; set; }
@@ -44,6 +46,33 @@ namespace Ma.Terminal.SelfService.View
             DataContext = _viewModel;
 
             Title.OnBackspaceClick += () => _viewModel.NavigationTo(BackPageView);
+            Cancel.OnClick += p => _viewModel.NavigationTo(BackPageView);
+            Enter.OnClick += p =>
+            {
+                _config.Card = Card.Value;
+                _machine.Detail.CardCount = _config.Card.ToString();
+                _viewModel.CardSurplus = int.Parse(_machine.Detail.CardCount);
+
+                _config.Ink = Ink.Value;
+                _machine.Detail.InkCount = _config.Ink.ToString();
+                _viewModel.InkSurplus = int.Parse(_machine.Detail.InkCount);
+
+                _config.Lanyard = Lanyard.Value;
+                _machine.Detail.CardRopeCover = _config.Lanyard.ToString();
+                _viewModel.LanyardSurplus = int.Parse(_machine.Detail.CardRopeCover);
+
+                Task.Run(async () =>
+                {
+                    await _api.SaveMachine(_machine.MachineNo,
+                                           _machine.Detail.CardCount,
+                                           _machine.Detail.InkCount,
+                                           _machine.Detail.CardRopeCover);
+                });
+
+                _config.Save();
+                _logger.Info($"Material resett {_config}");
+                _viewModel.NavigationTo(BackPageView);
+            };
 
             Loaded += ConfirmPageView_Loaded;
         }
@@ -56,62 +85,20 @@ namespace Ma.Terminal.SelfService.View
         {
             _viewModel.Initialization();
             _viewModel.NavigationTo = navigationParent.NavigationTo;
+
+            Card.MaxValue = _viewModel.MaxCardValue;
+            Ink.MaxValue = _viewModel.MaxInkValue;
+            Lanyard.MaxValue = _viewModel.MaxLanyardValue;
+
+            Card.Value = _viewModel.CardSurplus;
+            Ink.Value = _viewModel.InkSurplus;
+            Lanyard.Value = _viewModel.LanyardSurplus;
+
             return this;
         }
 
         public void NavigatedTo(IModel model)
         {
-        }
-
-        private void ResetCard(ClickEffectGrid sender)
-        {
-            _config.Card = _machine.MaxCard;
-            _machine.Detail.CardCount = _config.Card.ToString();
-            _viewModel.CardSurplus = _machine.Detail.CardCount;
-
-            Task.Run(async () =>
-            {
-                await _api.SaveMachine(_machine.MachineNo,
-                                       _machine.Detail.CardCount,
-                                       _machine.Detail.InkCount,
-                                       _machine.Detail.CardRopeCover);
-            });
-
-            _config.Save();
-        }
-
-        private void ResetInk(ClickEffectGrid sender)
-        {
-            _config.Ink = _machine.MaxInk;
-            _machine.Detail.InkCount = _config.Ink.ToString();
-            _viewModel.InkSurplus = _machine.Detail.InkCount;
-
-            Task.Run(async () =>
-            {
-                await _api.SaveMachine(_machine.MachineNo,
-                                       _machine.Detail.CardCount,
-                                       _machine.Detail.InkCount,
-                                       _machine.Detail.CardRopeCover);
-            });
-
-            _config.Save();
-        }
-
-        private void ResetLanyard(ClickEffectGrid sender)
-        {
-            _config.Lanyard = _machine.MaxLanyard;
-            _machine.Detail.CardRopeCover = _config.Lanyard.ToString();
-            _viewModel.LanyardSurplus = _machine.Detail.CardRopeCover;
-
-            Task.Run(async () =>
-            {
-                await _api.SaveMachine(_machine.MachineNo,
-                                       _machine.Detail.CardCount,
-                                       _machine.Detail.InkCount,
-                                       _machine.Detail.CardRopeCover);
-            });
-
-            _config.Save();
         }
     }
 }

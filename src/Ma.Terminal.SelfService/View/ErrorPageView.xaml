@@ -19,7 +19,9 @@
             <RowDefinition Height="278*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
-            <controls:TitleControl x:Name="Title" Title="{Binding Title, Mode=OneWay}"/>
+            <controls:TitleControl x:Name="Title"
+                                   Title="{Binding Title, Mode=OneWay}"
+                                   IsAllowBack="{Binding IsAllowBack, Mode=OneWay}"/>
         </Grid>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
@@ -33,12 +35,14 @@
             <Viewbox x:Name="HaveCard" Grid.Column="1" Visibility="Collapsed">
                 <Image Source="pack://SiteOfOrigin:,,,/Resource/Image/HaveCardTips.png" />
             </Viewbox>
-            <Grid x:Name="ErrorMessage" Grid.Column="1">
+            <Grid x:Name="ErrorMessage" Grid.Column="1" Visibility="Collapsed">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="300*"/>
-                    <RowDefinition Height="100*"/>
-                    <RowDefinition Height="300*"/>
+                    <RowDefinition Height="678*"/>
+                    <RowDefinition Height="132*"/>
                 </Grid.RowDefinitions>
+                <Viewbox Grid.Row="0">
+                    <Image Source="pack://SiteOfOrigin:,,,/Resource/Image/IssueCardError.png" />
+                </Viewbox>
                 <Viewbox Grid.Row="1" >
                     <TextBlock Text="{Binding ErrMsg, Mode=OneWay}"
                                FontWeight="Medium"/>

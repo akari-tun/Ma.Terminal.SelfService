@@ -59,6 +59,7 @@ namespace Ma.Terminal.SelfService.Utils
             return null;
         }
         #endregion
+
         #region  Bitmap  转 BitmapImage
         /// <summary>
         /// Bitmap  转 BitmapImage

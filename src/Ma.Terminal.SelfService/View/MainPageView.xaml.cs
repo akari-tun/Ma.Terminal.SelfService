@@ -2,6 +2,7 @@
 using Ma.Terminal.SelfService.Model;
 using Ma.Terminal.SelfService.ViewModel;
 using Ma.Terminal.SelfService.WebApi;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -24,7 +25,6 @@ namespace Ma.Terminal.SelfService.View
     /// </summary>
     public partial class MainPageView : Page, IPageViewInterface
     {
-        static bool _isLoading = false;
         MainPageViewModel _viewModel = null;
         public IViewModel ViewModel => _viewModel;
 
@@ -43,68 +43,20 @@ namespace Ma.Terminal.SelfService.View
 
         private void MainPageView_Loaded(object sender, RoutedEventArgs e)
         {
-            ErrorMsg.Text = string.Empty;
-            InitCard.IsEnabled = false;
-            ReCard.IsEnabled = false;
-
             Task.Run(() => Ioc.Default.GetRequiredService<Device.Light.Operator>().UnLight());
 
-            if (!_isLoading)
+            var machine = Ioc.Default.GetRequiredService<Machine>();
+
+            _viewModel.IsServiceAvailable = machine.Detail.Status == 1;
+
+            Task.Run(async () =>
             {
-                Task.Run(async () =>
+                if (!_viewModel.IsLoading)
                 {
-                    var requester = Ioc.Default.GetRequiredService<Requester>();
-                    var machine = Ioc.Default.GetRequiredService<Machine>();
-
-                    _isLoading = true;
-
-                    try
-                    {
-                        int waitTime = 0;
-
-                        do
-                        {
-                            if (waitTime <= 0)
-                            {
-                                var detail = await requester.GetMachineDetail();
-
-                                if (detail != null)
-                                {
-                                    machine.Detail = new Detail()
-                                    {
-                                        ProjectId = detail.ProjectId,
-                                        Address = detail.Address,
-                                        CardCount = detail.CardCount,
-                                        InkCount = detail.InkCount,
-                                        CardRopeCover = detail.CardRopeCover,
-                                        Status = detail.Status
-                                    };
-                                }
-
-                                await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                                {
-                                    ErrorMsg.Text = machine.Detail.Status == 1 ? string.Empty : _viewModel.GetString("NoServiceDescript");
-                                    InitCard.IsEnabled = machine.Detail.Status == 1;
-                                    ReCard.IsEnabled = machine.Detail.Status == 1;
-                                }));
-
-                                waitTime = 10000;
-                            }
-
-                            Thread.Sleep(10);
-                            waitTime -= 10;
-                        } while (machine.Detail.Status != 1);
-                    }
-                    catch (Exception)
-                    {
-
-                    }
-                    finally
-                    {
-                        _isLoading = false;
-                    }
-                });
-            }
+                    _viewModel.IsLoading = true;
+                    await _viewModel.Loading();
+                }
+            });
         }
 
         private void Grid_OnClick(Controls.ClickEffectGrid sender)

@@ -122,8 +122,6 @@ namespace Ma.Terminal.SelfService.Utils
         {
             HttpResponseMessage response = null;
 
-            Debug.WriteLine($"Http get --> [{url}]");
-
             using (HttpClient httpClient = new HttpClient()
             {
                 MaxResponseContentBufferSize = 512000,

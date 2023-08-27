@@ -21,6 +21,7 @@ namespace Ma.Terminal.SelfService.ViewModel
         public override void Initialization()
         {
             Title = GetString("Query");
+            IsAllowBack = true;
         }
 
         public async Task<UserModel> Query(string phone, string code)

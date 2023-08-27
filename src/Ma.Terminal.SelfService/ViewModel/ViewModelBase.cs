@@ -22,6 +22,17 @@ namespace Ma.Terminal.SelfService.ViewModel
                 SetProperty(ref _title, value);
             }
         }
+
+        bool _isAllowBack = true;
+        public bool IsAllowBack
+        {
+            get => _isAllowBack;
+            set
+            {
+                SetProperty(ref _isAllowBack, value);
+            }
+        }
+
         public bool IsShown { get; set; }
 
         public ViewModelBase()

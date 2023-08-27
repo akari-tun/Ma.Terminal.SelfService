@@ -10,8 +10,8 @@ namespace Ma.Terminal.SelfService.ViewModel
     {
         public Action<IPageViewInterface> NavigationTo;
 
-        string _cardSurplus;
-        public string CardSurplus
+        int _cardSurplus;
+        public int CardSurplus
         {
             get { return _cardSurplus; }
             set
@@ -20,8 +20,8 @@ namespace Ma.Terminal.SelfService.ViewModel
             }
         }
 
-        string _inkSurplus;
-        public string InkSurplus
+        int _inkSurplus;
+        public int InkSurplus
         {
             get { return _inkSurplus; }
             set
@@ -30,8 +30,8 @@ namespace Ma.Terminal.SelfService.ViewModel
             }
         }
 
-        string _lanyardSurplus;
-        public string LanyardSurplus
+        int _lanyardSurplus;
+        public int LanyardSurplus
         {
             get { return _lanyardSurplus; }
             set
@@ -40,15 +40,55 @@ namespace Ma.Terminal.SelfService.ViewModel
             }
         }
 
+        int _maxCardValue;
+
+        public int MaxCardValue
+        {
+            get { return _maxCardValue; }
+            set
+            {
+                SetProperty(ref _maxCardValue, value);
+            }
+        }
+
+        int _maxInkValue;
+        public int MaxInkValue
+        {
+            get { return _maxInkValue; }
+            set
+            {
+                SetProperty(ref _maxInkValue, value);
+            }
+        }
+
+        int _maxLanyardValue;
+        public int MaxLanyardValue
+        {
+            get { return _maxLanyardValue; }
+            set
+            {
+                SetProperty(ref _maxLanyardValue, value);
+            }
+        }
+
         public override void Initialization()
         {
-            Title = GetString("Reset");
+            Title = GetString("Config");
+            IsAllowBack = true;
 
             var machine = Ioc.Default.GetRequiredService<Machine>();
 
-            SetProperty(ref _cardSurplus, machine.Detail.CardCount, nameof(CardSurplus));
-            SetProperty(ref _inkSurplus, machine.Detail.InkCount, nameof(InkSurplus));
-            SetProperty(ref _lanyardSurplus, machine.Detail.CardRopeCover, nameof(LanyardSurplus));
+            MaxCardValue = machine.MaxCard;
+            MaxInkValue = machine.MaxInk;
+            MaxLanyardValue = machine.MaxLanyard;
+
+            int.TryParse(machine.Detail.CardCount, out _cardSurplus);
+            int.TryParse(machine.Detail.InkCount, out _inkSurplus);
+            int.TryParse(machine.Detail.CardRopeCover, out _lanyardSurplus);
+
+            OnPropertyChanged(nameof(CardSurplus));
+            OnPropertyChanged(nameof(InkSurplus));
+            OnPropertyChanged(nameof(LanyardSurplus));
         }
     }
 }

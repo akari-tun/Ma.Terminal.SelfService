@@ -21,5 +21,10 @@ namespace Ma.Terminal.SelfService.Model
         {
             File.WriteAllText($"{AppDomain.CurrentDomain.BaseDirectory}config.json", JsonSerializer.Serialize(this));
         }
+
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this);
+        }
     }
 }

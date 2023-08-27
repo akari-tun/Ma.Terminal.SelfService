@@ -43,6 +43,15 @@ namespace Ma.Terminal.SelfService.Controls
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register("Title", typeof(string), typeof(TitleControl), new PropertyMetadata(string.Empty));
 
+        public bool IsAllowBack
+        {
+            get { return (bool)GetValue(IsAllowBackProperty); }
+            set { SetValue(IsAllowBackProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsAllowBackProperty =
+            DependencyProperty.Register("IsAllowBack", typeof(bool), typeof(TitleControl), new PropertyMetadata(true));
+
         private void ClickEffectGrid_OnClick(ClickEffectGrid sender)
         {
             OnBackspaceClick?.Invoke();

@@ -16,6 +16,7 @@ using System.Drawing;
 using System.IO;
 using System.Diagnostics;
 using Ma.Terminal.SelfService.Utils;
+using NLog;
 
 namespace Ma.Terminal.SelfService.ViewModel
 {
@@ -30,7 +31,11 @@ namespace Ma.Terminal.SelfService.ViewModel
         private Requester _api;
         private Machine _machine;
         private byte[] _uid;
+        private IssueCardModel _issueCardModel;
         private Queue<Image> _waitPrintImages;
+        private Queue<IssueCardModel> _finishCards;
+        private bool _isLoading = false;
+        private Logger _logger = LogManager.GetCurrentClassLogger();
 
         public delegate void CardPrintedHandler(bool isSuccess, string msg);
         public event CardPrintedHandler OnCardPrinted;
@@ -43,7 +48,7 @@ namespace Ma.Terminal.SelfService.ViewModel
             Device.Printer.Operator printer,
             Device.Lanyard.Operator lanyard,
             Device.Light.Operator light,
-            ItemsConfig config)
+            ItemsConfig config) : base()
         {
             _machine = machine;
             _api = api;
@@ -64,15 +69,21 @@ namespace Ma.Terminal.SelfService.ViewModel
         public override void Initialization()
         {
             Title = GetString("TakeCard");
+            IsAllowBack = false;
         }
 
         public void PrintCard()
         {
+            _issueCardModel = new IssueCardModel();
+
             Task.Run(() => _light.Light());
 
             Task.Run(async () =>
             {
                 var model = Ioc.Default.GetRequiredService<UserModel>();
+
+                _issueCardModel.OrderId = model.OrderId;
+                _issueCardModel.UserId = model.UserId;
 
                 if (!_printer.MoveToRfPosition())
                 {
@@ -86,6 +97,8 @@ namespace Ma.Terminal.SelfService.ViewModel
                     _printer.ExitCard();
                     return;
                 }
+
+                _issueCardModel.Uid = _uid;
 
                 var openCardApdu = await _api.OpenCardApdu(model.OrderId,
                     model.UserId,
@@ -103,7 +116,6 @@ namespace Ma.Terminal.SelfService.ViewModel
 
                 foreach (var item in openCardApdu.Capdus)
                 {
-                    Debug.WriteLine($"Exec apdu:{item.Capdu} index:[{item.Index}]");
                     if (!_reader.ExecuteApdu(FunTools.StrToHexBytes(item.Capdu),
                             out lastRsp,
                             item.Sws))
@@ -140,7 +152,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                         foreach (var item in apduExe.Capdus)
                         {
                             lastIndex = item.Index;
-                            Debug.WriteLine($"apdu:{item.Capdu} index:[{item.Index}]");
+
                             if (!_reader.ExecuteApdu(FunTools.StrToHexBytes(item.Capdu),
                                     out lastRsp,
                                     item.Sws))
@@ -213,24 +225,66 @@ namespace Ma.Terminal.SelfService.ViewModel
             await Task.Run(() => _lanyard.RollLanyard(_machine.MaxLanyard - _config.Lanyard, model.OrderId));
             await Task.Run(() => _light.Light(_machine.MaxLanyard - _config.Lanyard));
 
-            if (await _api.Finish(model.OrderId,
-                                  model.UserId,
-                                  FunTools.BytesToHexStr(_uid),
-                                  _machine.MachineNo))
-            {
-                await _api.SaveMachine(_machine.MachineNo,
-                                       _machine.Detail.CardCount,
-                                       _machine.Detail.InkCount,
-                                       _machine.Detail.CardRopeCover);
+            _finishCards.Enqueue(_issueCardModel);
+            OnCardPrinted?.Invoke(true, "制卡成功");
 
-                OnCardPrinted?.Invoke(true, "制卡成功");
-            }
-            else
+            if (!_isLoading)
             {
-                OnCardPrinted?.Invoke(false, _api.LastMessage);
+                RunUpload();
             }
 
             return;
+        }
+
+        private void RunUpload()
+        {
+            Task.Run(async () =>
+            {
+                _isLoading = true;
+
+                while (_isLoading)
+                {
+                    IssueCardModel model = _finishCards.Dequeue();
+
+                    if (model != null)
+                    {
+                        await Finish(model);
+                    }
+                    
+                    _isLoading = _finishCards.Count > 0;
+
+                    for (int i = 0; i < 6000; i++)
+                    {
+                        if (!_isLoading) break;
+                        await Task.Delay(10);
+                    }
+                }
+            });
+        }
+
+        private async Task Finish(IssueCardModel model)
+        {
+            bool notSuccess = true;
+
+            while (notSuccess)
+            {
+                if (await _api.Finish(model.OrderId,
+                                      model.UserId,
+                                      FunTools.BytesToHexStr(model.Uid),
+                                      _machine.MachineNo))
+                {
+                    _logger.Info($"/yktInfo/openCard/finish -> [OrderId:{model.OrderId}] [UserId:{model.UserId}] [Uid:{FunTools.BytesToHexStr(model.Uid)}] Success");
+
+                    await _api.SaveMachine(_machine.MachineNo,
+                                           _machine.Detail.CardCount,
+                                           _machine.Detail.InkCount,
+                                           _machine.Detail.CardRopeCover);
+                }
+                else
+                {
+                    _logger.Info($"/yktInfo/openCard/finish -> [OrderId:{model.OrderId}] [UserId:{model.UserId}] [Uid:{FunTools.BytesToHexStr(model.Uid)}] {_api.LastMessage}");
+                }
+            }
         }
     }
 }
