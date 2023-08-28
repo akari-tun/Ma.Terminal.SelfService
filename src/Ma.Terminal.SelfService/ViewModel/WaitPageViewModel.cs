@@ -87,7 +87,17 @@ namespace Ma.Terminal.SelfService.ViewModel
                 _issueCardModel.OrderId = model.OrderId;
                 _issueCardModel.UserId = model.UserId;
 
-                if (!_printer.MoveToRfPosition())
+                bool isCardReady = false;
+                int retry = 5;
+
+                while (!isCardReady && retry > 0)
+                {
+                    isCardReady = _printer.MoveToRfPosition();
+                    await Task.Delay(300);
+                    retry--;
+                }
+
+                if (!isCardReady)
                 {
                     OnCardPrinted?.Invoke(false, _printer.LastError);
                     return;
