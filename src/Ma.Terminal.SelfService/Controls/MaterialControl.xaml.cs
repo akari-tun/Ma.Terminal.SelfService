@@ -111,7 +111,7 @@ namespace Ma.Terminal.SelfService.Controls
         private async void LoopValue(int value)
         {
             int count = 0;
-            await Task.Delay(500);
+            await Task.Delay(250);
 
             while (_isIncreasePressing || _isReducePressing)
             {
