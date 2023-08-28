@@ -13,6 +13,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Ma.Terminal.SelfService
 {
@@ -109,6 +110,60 @@ namespace Ma.Terminal.SelfService
             model.IsCheckRunning = false;
 
             base.OnExit(e);
+        }
+
+        /// <summary>
+        /// 应用程序启动
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            Current.DispatcherUnhandledException += App_OnDispatcherUnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        }
+
+        /// <summary>
+        /// UI线程抛出全局异常事件处理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            try
+            {
+                _logger.Error(e.Exception.Message);
+                _logger.Error(e.Exception.StackTrace);
+                e.Handled = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+                _logger.Error(ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// 非UI线程抛出全局异常事件处理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            try
+            {
+                var exception = e.ExceptionObject as Exception;
+                if (exception != null)
+                {
+                    _logger.Error(exception.Message);
+                    _logger.Error(exception.StackTrace);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+                _logger.Error(ex.StackTrace);
+            }
         }
     }
 }

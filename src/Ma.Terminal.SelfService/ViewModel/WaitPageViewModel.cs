@@ -210,30 +210,37 @@ namespace Ma.Terminal.SelfService.ViewModel
 
         private async void PrintEnd(object sender, PrintEventArgs e)
         {
-            var model = Ioc.Default.GetRequiredService<UserModel>();
-
-            _config.Card--;
-            _config.Ink--;
-            _config.Lanyard--;
-
-            _config.Save();
-
-            _machine.Detail.CardCount = _config.Card.ToString();
-            _machine.Detail.InkCount = _config.Ink.ToString();
-            _machine.Detail.CardRopeCover = _config.Lanyard.ToString();
-
-            await Task.Run(() => _lanyard.RollLanyard(_machine.MaxLanyard - _config.Lanyard, model.OrderId));
-            await Task.Run(() => _light.Light(_machine.MaxLanyard - _config.Lanyard));
-
-            _finishCards.Enqueue(_issueCardModel);
-            OnCardPrinted?.Invoke(true, "制卡成功");
-
-            if (!_isLoading)
+            try
             {
-                RunUpload();
+                var model = Ioc.Default.GetRequiredService<UserModel>();
+
+                _config.Card--;
+                _config.Ink--;
+                _config.Lanyard--;
+
+                _config.Save();
+
+                _machine.Detail.CardCount = _config.Card.ToString();
+                _machine.Detail.InkCount = _config.Ink.ToString();
+                _machine.Detail.CardRopeCover = _config.Lanyard.ToString();
+
+                await Task.Run(() => _lanyard.RollLanyard(_machine.MaxLanyard - _config.Lanyard, model.OrderId));
+                await Task.Run(() => _light.Light(_machine.MaxLanyard - _config.Lanyard));
+
+                _finishCards.Enqueue(_issueCardModel);
+                OnCardPrinted?.Invoke(true, "制卡成功");
+
+                if (!_isLoading)
+                {
+                    RunUpload();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+                _logger.Error(ex.StackTrace);
             }
 
-            return;
         }
 
         private void RunUpload()
@@ -244,23 +251,32 @@ namespace Ma.Terminal.SelfService.ViewModel
 
                 while (_isLoading)
                 {
-                    IssueCardModel model = _finishCards.Dequeue();
-
-                    if (model != null)
+                    try
                     {
-                        if (!await Finish(model))
+                        IssueCardModel model = _finishCards.Dequeue();
+
+                        if (model != null)
                         {
-                            _finishCards.Enqueue(model);
+                            if (!await Finish(model))
+                            {
+                                _finishCards.Enqueue(model);
+                            }
+                        }
+
+                        _isLoading = _finishCards.Count > 0;
+
+                        for (int i = 0; i < 6000; i++)
+                        {
+                            if (!_isLoading) break;
+                            await Task.Delay(10);
                         }
                     }
-                    
-                    _isLoading = _finishCards.Count > 0;
-
-                    for (int i = 0; i < 6000; i++)
+                    catch (Exception ex)
                     {
-                        if (!_isLoading) break;
-                        await Task.Delay(10);
+                        _logger.Error(ex.Message);
+                        _logger.Error(ex.StackTrace);
                     }
+
                 }
             });
         }
