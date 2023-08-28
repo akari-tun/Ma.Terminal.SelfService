@@ -49,14 +49,14 @@ namespace Ma.Terminal.SelfService.View
 
             _viewModel.IsServiceAvailable = machine.Detail.Status == 1;
 
-            Task.Run(async () =>
+            if (!_viewModel.IsLoading)
             {
-                if (!_viewModel.IsLoading)
+                _viewModel.IsLoading = true;
+                Task.Run(async () =>
                 {
-                    _viewModel.IsLoading = true;
                     await _viewModel.Loading();
-                }
-            });
+                });
+            }
         }
 
         private void Grid_OnClick(Controls.ClickEffectGrid sender)

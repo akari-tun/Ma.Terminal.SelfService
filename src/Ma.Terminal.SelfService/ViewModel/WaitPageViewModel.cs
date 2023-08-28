@@ -68,7 +68,7 @@ namespace Ma.Terminal.SelfService.ViewModel
 
         public override void Initialization()
         {
-            Title = GetString("TakeCard");
+            Title = GetString("WaitCard");
             IsAllowBack = false;
         }
 
@@ -248,7 +248,10 @@ namespace Ma.Terminal.SelfService.ViewModel
 
                     if (model != null)
                     {
-                        await Finish(model);
+                        if (!await Finish(model))
+                        {
+                            _finishCards.Enqueue(model);
+                        }
                     }
                     
                     _isLoading = _finishCards.Count > 0;
@@ -262,29 +265,28 @@ namespace Ma.Terminal.SelfService.ViewModel
             });
         }
 
-        private async Task Finish(IssueCardModel model)
+        private async Task<bool> Finish(IssueCardModel model)
         {
-            bool notSuccess = true;
-
-            while (notSuccess)
+            if (await _api.Finish(model.OrderId,
+                                  model.UserId,
+                                  FunTools.BytesToHexStr(model.Uid),
+                                  _machine.MachineNo))
             {
-                if (await _api.Finish(model.OrderId,
-                                      model.UserId,
-                                      FunTools.BytesToHexStr(model.Uid),
-                                      _machine.MachineNo))
-                {
-                    _logger.Info($"/yktInfo/openCard/finish -> [OrderId:{model.OrderId}] [UserId:{model.UserId}] [Uid:{FunTools.BytesToHexStr(model.Uid)}] Success");
+                _logger.Info($"/yktInfo/openCard/finish -> [OrderId:{model.OrderId}] [UserId:{model.UserId}] [Uid:{FunTools.BytesToHexStr(model.Uid)}] Success");
 
-                    await _api.SaveMachine(_machine.MachineNo,
-                                           _machine.Detail.CardCount,
-                                           _machine.Detail.InkCount,
-                                           _machine.Detail.CardRopeCover);
-                }
-                else
-                {
-                    _logger.Info($"/yktInfo/openCard/finish -> [OrderId:{model.OrderId}] [UserId:{model.UserId}] [Uid:{FunTools.BytesToHexStr(model.Uid)}] {_api.LastMessage}");
-                }
+                await _api.SaveMachine(_machine.MachineNo,
+                                        _machine.Detail.CardCount,
+                                        _machine.Detail.InkCount,
+                                        _machine.Detail.CardRopeCover);
+
+                return true;
             }
+            else
+            {
+                _logger.Info($"/yktInfo/openCard/finish -> [OrderId:{model.OrderId}] [UserId:{model.UserId}] [Uid:{FunTools.BytesToHexStr(model.Uid)}] {_api.LastMessage}");
+            }
+
+            return false;
         }
     }
 }

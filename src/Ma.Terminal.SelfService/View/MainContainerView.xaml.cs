@@ -75,16 +75,20 @@ namespace Ma.Terminal.SelfService.View
             _resetPage.BackPageView = _mainPage;
             _inputPwdPage.NextPageView = _resetPage;
             _inputPwdPage.BackPageView = _mainPage;
-
-            Task.Run(async () =>
-            {
-                await _viewModel.CheckStatus();
-            });
         }
 
         private void MainContainerView_Loaded(object sender, RoutedEventArgs e)
         {
             _viewModel.NavigationTo(_viewModel.PageList[0]);
+
+            if (!_viewModel.IsCheckRunning)
+            {
+                _viewModel.IsCheckRunning = true;
+                Task.Run(async () =>
+                {
+                    await _viewModel.CheckStatus();
+                });
+            }
         }
 
         private void ExitClick(ClickEffectGrid sender)

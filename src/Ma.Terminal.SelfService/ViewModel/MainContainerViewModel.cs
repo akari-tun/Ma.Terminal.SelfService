@@ -32,9 +32,9 @@ namespace Ma.Terminal.SelfService.ViewModel
 
         public async Task CheckStatus()
         {
-            try
+            while (_isCheckRunning)
             {
-                do
+                try
                 {
                     var detail = await _api.GetMachineDetail();
 
@@ -59,18 +59,15 @@ namespace Ma.Terminal.SelfService.ViewModel
                         if (!_isCheckRunning) break;
                         await Task.Delay(10);
                     }
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex.Message);
+                    _logger.Error(ex.StackTrace);
+                }
+            } 
 
-                } while (_isCheckRunning);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.Message);
-                _logger.Error(ex.StackTrace);
-            }
-            finally
-            {
-                _isCheckRunning = false;
-            }
+            _isCheckRunning = false;
         }
     }
 }

@@ -81,7 +81,7 @@ namespace Ma.Terminal.SelfService.Device.Reader
         {
             byte[] buff = new byte[255];
 
-            _logger.Trace($"apdu exec --> len:{cmd.Length} rsp:[{cmd}]");
+            _logger.Trace($"apdu exec --> len:{cmd.Length} rsp:[{FunTools.BytesToHexStr(cmd)}]");
             int len = ReaderApi.PICC_Reader_Application(_handler, cmd.Length, cmd, buff);
             if (len < 2)
             {

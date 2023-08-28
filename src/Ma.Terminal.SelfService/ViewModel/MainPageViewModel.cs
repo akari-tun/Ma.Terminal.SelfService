@@ -62,10 +62,11 @@ namespace Ma.Terminal.SelfService.ViewModel
 
         public async Task Loading()
         {
-            try
+            do
             {
-                do
+                try
                 {
+
                     if (_config.Card == 0 || _config.Ink == 0 || _config.Lanyard == 0)
                     {
                         _logger.Info($"Meterial low {_config}");
@@ -103,25 +104,21 @@ namespace Ma.Terminal.SelfService.ViewModel
                             Error = IsServiceAvailable ? string.Empty : _api.LastMessage;
                         }));
                     }
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex.Message);
+                    _logger.Error(ex.StackTrace);
+                }
 
+                for (int i = 0; i < 1000; i++)
+                {
+                    if (!IsLoading) break;
+                    await Task.Delay(10);
+                }
+            } while (!IsServiceAvailable || IsLoading);
 
-                    for (int i = 0; i < 1000; i++)
-                    {
-                        if (!IsLoading) break;
-                        await Task.Delay(10);
-                    }
-
-                } while (!IsServiceAvailable || IsLoading);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.Message);
-                _logger.Error(ex.StackTrace);
-            }
-            finally
-            {
-                IsLoading = false;
-            }
+            IsLoading = false;
         }
     }
 }
