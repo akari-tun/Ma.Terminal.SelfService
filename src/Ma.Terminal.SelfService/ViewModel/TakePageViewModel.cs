@@ -10,7 +10,7 @@ namespace Ma.Terminal.SelfService.ViewModel
 
         public override void Initialization()
         {
-            Title = GetString("WaitCard");
+            Title = GetString("TakeCard");
             IsAllowBack = false;
         }
     }
