@@ -64,6 +64,8 @@ namespace Ma.Terminal.SelfService.ViewModel
             _doucument.EndPrint += PrintEnd;
 
             _waitPrintImages = new Queue<Image>();
+
+            _finishCards = new Queue<IssueCardModel>();
         }
 
         public override void Initialization()
@@ -230,17 +232,13 @@ namespace Ma.Terminal.SelfService.ViewModel
                 _finishCards.Enqueue(_issueCardModel);
                 OnCardPrinted?.Invoke(true, "制卡成功");
 
-                if (!_isLoading)
-                {
-                    RunUpload();
-                }
+                if (!_isLoading) RunUpload();
             }
             catch (Exception ex)
             {
                 _logger.Error(ex.Message);
                 _logger.Error(ex.StackTrace);
             }
-
         }
 
         private void RunUpload()
@@ -291,9 +289,9 @@ namespace Ma.Terminal.SelfService.ViewModel
                 _logger.Info($"/yktInfo/openCard/finish -> [OrderId:{model.OrderId}] [UserId:{model.UserId}] [Uid:{FunTools.BytesToHexStr(model.Uid)}] Success");
 
                 await _api.SaveMachine(_machine.MachineNo,
-                                        _machine.Detail.CardCount,
-                                        _machine.Detail.InkCount,
-                                        _machine.Detail.CardRopeCover);
+                                       _machine.Detail.CardCount,
+                                       _machine.Detail.InkCount,
+                                       _machine.Detail.CardRopeCover);
 
                 return true;
             }
