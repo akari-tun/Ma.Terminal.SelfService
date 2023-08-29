@@ -113,10 +113,13 @@ namespace Ma.Terminal.SelfService.ViewModel
                     return;
                 }
 
+                _config.Card--;
+
                 if (!_reader.OpenCard(out _uid))
                 {
                     OnCardPrinted?.Invoke(false, _reader.LastError);
                     _printer.ExitCard();
+                    _config.Save();
                     return;
                 }
 
@@ -130,6 +133,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                 {
                     OnCardPrinted?.Invoke(false, _api.LastMessage);
                     _printer.ExitCard();
+                    _config.Save();
                     return;
                 }
 
@@ -144,6 +148,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                     {
                         OnCardPrinted?.Invoke(false, _reader.LastError);
                         _printer.ExitCard();
+                        _config.Save();
                         return;
                     }
 
@@ -166,6 +171,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                         isHasNext = false;
                         OnCardPrinted?.Invoke(false, _api.LastMessage);
                         _printer.ExitCard();
+                        _config.Save();
                         return;
                     }
 
@@ -236,18 +242,13 @@ namespace Ma.Terminal.SelfService.ViewModel
             {
                 var model = Ioc.Default.GetRequiredService<UserModel>();
 
-                _config.Card--;
+                await Task.Run(() => _lanyard.RollLanyard(_machine.MaxLanyard - _config.Lanyard, model.OrderId));
+                await Task.Run(() => _light.Light(_machine.MaxLanyard - _config.Lanyard));
+
                 _config.Ink--;
                 _config.Lanyard--;
 
                 _config.Save();
-
-                _machine.Detail.CardCount = _config.Card.ToString();
-                _machine.Detail.InkCount = _config.Ink.ToString();
-                _machine.Detail.CardRopeCover = _config.Lanyard.ToString();
-
-                await Task.Run(() => _lanyard.RollLanyard(_machine.MaxLanyard - _config.Lanyard, model.OrderId));
-                await Task.Run(() => _light.Light(_machine.MaxLanyard - _config.Lanyard));
 
                 _finishCards.Enqueue(_issueCardModel);
 
@@ -324,11 +325,6 @@ namespace Ma.Terminal.SelfService.ViewModel
                                   _machine.MachineNo))
             {
                 _logger.Info($"/yktInfo/openCard/finish -> [OrderId:{model.OrderId}] [UserId:{model.UserId}] [Uid:{FunTools.BytesToHexStr(model.Uid)}] Success");
-
-                await _api.SaveMachine(_machine.MachineNo,
-                                       _machine.Detail.CardCount,
-                                       _machine.Detail.InkCount,
-                                       _machine.Detail.CardRopeCover);
 
                 return true;
             }
