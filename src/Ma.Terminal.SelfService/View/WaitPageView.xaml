@@ -48,5 +48,16 @@
                 <Image Source="pack://SiteOfOrigin:,,,/Resource/Image/WaitCardTips.png" />
             </Viewbox>
         </Grid>
+        <Grid Grid.Row="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100*" />
+                <RowDefinition Height="500*" />
+            </Grid.RowDefinitions>
+            <Viewbox Grid.Row="0">
+                <TextBlock x:Name="Timeout"
+                           Text="{Binding Timeout, Mode=OneWay}"
+                           FontWeight="Medium"/>
+            </Viewbox>
+        </Grid>
     </Grid>
 </Page>

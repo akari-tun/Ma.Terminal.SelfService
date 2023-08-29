@@ -42,6 +42,16 @@ namespace Ma.Terminal.SelfService.ViewModel
 
         public Action<IPageViewInterface> NavigationTo;
 
+        int _timeout;
+        public int Timeout
+        {
+            get => _timeout;
+            set
+            {
+                SetProperty(ref _timeout, value);
+            }
+        }
+
         public WaitPageViewModel(Machine machine,
             Requester api,
             Device.Reader.Operator reader,
@@ -240,8 +250,8 @@ namespace Ma.Terminal.SelfService.ViewModel
                 await Task.Run(() => _light.Light(_machine.MaxLanyard - _config.Lanyard));
 
                 _finishCards.Enqueue(_issueCardModel);
-                OnCardPrinted?.Invoke(true, "制卡成功");
 
+                WaitingPrinte();
                 if (!_isLoading) RunUpload();
             }
             catch (Exception ex)
@@ -249,6 +259,23 @@ namespace Ma.Terminal.SelfService.ViewModel
                 _logger.Error(ex.Message);
                 _logger.Error(ex.StackTrace);
             }
+        }
+
+        private void WaitingPrinte()
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                    OnCardPrinted?.Invoke(true, "等待打印");
+                    OnCardPrinted?.Invoke(true, await _printer.WaitPrintEnd(30000, t => Timeout = t) ? "制卡成功" : "等待打印超时");
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex.Message);
+                    _logger.Error(ex.StackTrace);
+                }
+            });
         }
 
         private void RunUpload()

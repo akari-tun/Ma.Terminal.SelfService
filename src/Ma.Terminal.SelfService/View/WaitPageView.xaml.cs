@@ -37,21 +37,20 @@ namespace Ma.Terminal.SelfService.View
             _errViewModel = Ioc.Default.GetRequiredService<ErrorPageViewModel>();
             DataContext = _viewModel;
 
-            _viewModel.OnCardPrinted += (r, m) =>
+            _viewModel.OnCardPrinted += (p, m) =>
             {
-                if (r)
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    Application.Current.Dispatcher.BeginInvoke(_viewModel.NavigationTo, NextPageView);
-                }
-                else
-                {
-                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    if (m == "等待打印")
                     {
-                        _errViewModel.ErrMsg = $"制卡失败，{m}";
-                        _errViewModel.ErrorType = "ErrorMessage";
-                        _viewModel.NavigationTo(ErrorPageView);
-                    }));
-                }
+                        Timeout.Visibility = Visibility.Visible;
+                        return;
+                    }
+
+                    _errViewModel.ErrMsg = p ? string.Empty: $"制卡失败，{m}";
+                    _errViewModel.ErrorType = "ErrorMessage";
+                    _viewModel.NavigationTo(p ? NextPageView : ErrorPageView);
+                }));
             };
             Title.OnBackspaceClick += () => _viewModel.NavigationTo(BackPageView);
         }
@@ -66,6 +65,7 @@ namespace Ma.Terminal.SelfService.View
 
         public void NavigatedTo(IModel model)
         {
+            Timeout.Visibility = Visibility.Collapsed;
             _viewModel.PrintCard();
         }
     }

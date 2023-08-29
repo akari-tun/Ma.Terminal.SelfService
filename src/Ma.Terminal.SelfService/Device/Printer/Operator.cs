@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Ma.Terminal.SelfService.Device.Printer
 {
@@ -83,6 +84,22 @@ namespace Ma.Terminal.SelfService.Device.Printer
                 LastError = "排卡失败";
                 _logger.Trace(LastError);
             }
+        }
+
+        public async Task<bool> WaitPrintEnd(int timeout, Action<int> notify)
+        {
+            bool isSuccess = false;
+
+            while (timeout > 0 && !isSuccess)
+            {
+                if (timeout % 1000 == 0) notify?.Invoke(timeout / 1000);
+
+                isSuccess = PrinterApi.CXCMD_TestUnitReady(piSlot, piID) == 0;
+                timeout -= 200;
+                await Task.Delay(200);
+            }
+
+            return isSuccess;
         }
     }
 }
