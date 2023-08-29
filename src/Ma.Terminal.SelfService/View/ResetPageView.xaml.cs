@@ -79,12 +79,6 @@ namespace Ma.Terminal.SelfService.View
         private void ConfirmPageView_Loaded(object sender, RoutedEventArgs e)
         {
             _viewModel.Initialization();
-        }
-
-        public IPageViewInterface Init(INavigationSupport navigationParent)
-        {
-            _viewModel.Initialization();
-            _viewModel.NavigationTo = navigationParent.NavigationTo;
 
             Card.MaxValue = _viewModel.MaxCardValue;
             Ink.MaxValue = _viewModel.MaxInkValue;
@@ -93,6 +87,12 @@ namespace Ma.Terminal.SelfService.View
             Card.Value = _viewModel.CardSurplus;
             Ink.Value = _viewModel.InkSurplus;
             Lanyard.Value = _viewModel.LanyardSurplus;
+        }
+
+        public IPageViewInterface Init(INavigationSupport navigationParent)
+        {
+            _viewModel.Initialization();
+            _viewModel.NavigationTo = navigationParent.NavigationTo;
 
             return this;
         }
