@@ -13,7 +13,7 @@ namespace Ma.Terminal.SelfService.Device.Printer
 
         public string LastError { get; set; }
 
-        public bool MoveToRfPosition()
+        public bool IsReady()
         {
             int result = -1;
 
@@ -57,17 +57,28 @@ namespace Ma.Terminal.SelfService.Device.Printer
 
             _logger.Trace(LastError);
 
-            result = PrinterApi.CXCMD_LoadCard(piSlot, piID, 0, 0, 0, 0);
+            return result == 0;
+        }
 
-            if (result != 0)
+        public bool MoveToRfPosition()
+        {
+            int result = -1;
+
+            if (IsReady())
             {
-                LastError = "移动卡片到RF位置失败";
+                result = PrinterApi.CXCMD_LoadCard(piSlot, piID, 0, 0, 0, 0);
+
+                if (result != 0)
+                {
+                    LastError = "移动卡片到RF位置失败";
+                    _logger.Trace(LastError);
+                    return false;
+                }
+
+                LastError = "成功移动卡片到读卡位";
                 _logger.Trace(LastError);
-                return false;
             }
 
-            LastError = "成功移动卡片到读卡位";
-            _logger.Trace(LastError);
             return true;
         }
 

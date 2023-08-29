@@ -15,6 +15,7 @@ namespace Ma.Terminal.SelfService.ViewModel
         private ItemsConfig _config;
         private Requester _api;
         private Machine _machine;
+        private Device.Printer.Operator _printer;
         Logger _logger = LogManager.GetCurrentClassLogger();
 
         public Action<IPageViewInterface> NavigationTo;
@@ -49,11 +50,12 @@ namespace Ma.Terminal.SelfService.ViewModel
             }
         }
 
-        public MainPageViewModel(Machine machine, Requester api, ItemsConfig config) : base()
+        public MainPageViewModel(Machine machine, Requester api, ItemsConfig config, Device.Printer.Operator printer) : base()
         {
             _machine = machine;
             _api = api;
             _config = config;
+            _printer = printer;
         }
 
         public override void Initialization()
@@ -77,18 +79,24 @@ namespace Ma.Terminal.SelfService.ViewModel
                             Error = IsServiceAvailable ? string.Empty : GetString("NoMaterial");
                         }));
                     }
+                    else if (!_printer.IsReady())
+                    {
+                        _machine.Detail.Status = 0;
+                        await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            IsServiceAvailable = _machine.Detail.Status == 1;
+                            Error = IsServiceAvailable ? string.Empty : _printer.LastError;
+                        }));
+                    }
                     else
                     {
                         var detail = await _api.GetMachineDetail();
 
                         if (detail != null)
                         {
-                            _machine.Detail = new Detail()
-                            {
-                                ProjectId = detail.ProjectId,
-                                Address = detail.Address,
-                                Status = detail.Status
-                            };
+                            _machine.Detail.ProjectId = detail.ProjectId;
+                            _machine.Detail.Address = detail.Address;
+                            _machine.Detail.Status = detail.Status;
 
                             IsLoading = _machine.Detail.Status != 1;
                         }
