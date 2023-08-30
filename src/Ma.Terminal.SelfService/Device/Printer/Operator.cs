@@ -103,13 +103,18 @@ namespace Ma.Terminal.SelfService.Device.Printer
 
             while (timeout > 0 && !isSuccess)
             {
-                if (timeout % 1000 == 0) notify?.Invoke(timeout / 1000);
+                if (timeout % 1000 == 0)
+                {
+                    _logger.Trace($"Wait printed timeout {timeout / 1000} ");
+                    notify?.Invoke(timeout / 1000);
+                }
 
                 isSuccess = PrinterApi.CXCMD_TestUnitReady(piSlot, piID) == 0;
                 timeout -= 200;
                 await Task.Delay(200);
             }
 
+            _logger.Trace($"Wait printed is {(isSuccess ? "success" : "timeout")}");
             return isSuccess;
         }
     }
