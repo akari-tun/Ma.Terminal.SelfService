@@ -1,4 +1,5 @@
 ﻿using Ma.Terminal.Utils;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,6 +8,8 @@ namespace Ma.Terminal.SelfService.Device.Lanyard
 {
     public class Operator : UartBase
     {
+        private Logger _logger = LogManager.GetCurrentClassLogger();
+
         public void RollLanyard(int index, string orderId)
         {
             byte passage = 0;
@@ -35,7 +38,8 @@ namespace Ma.Terminal.SelfService.Device.Lanyard
             var cmd = new LanyardCommand() { Passage = passage, OrderId = orderId };
 
             _command = cmd.ToArray();
-            var aa = FunTools.BytesToHexStr(_command);
+            var str = FunTools.BytesToHexStr(_command);
+            _logger.Trace($"RollLanyard -> [Passage:{passage}] [OrderId:{orderId}] {str} ");
             SendCommand();
 
             _command = null;

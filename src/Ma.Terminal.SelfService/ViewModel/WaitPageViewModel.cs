@@ -269,7 +269,8 @@ namespace Ma.Terminal.SelfService.ViewModel
                 try
                 {
                     OnCardPrinted?.Invoke(true, "等待打印");
-                    OnCardPrinted?.Invoke(true, await _printer.WaitPrintEnd(30000, t => Timeout = t) ? "制卡成功" : "等待打印超时");
+                    var result = await _printer.WaitPrintEnd(60000, t => Timeout = t);
+                    OnCardPrinted?.Invoke(true, result ? "制卡成功" : "等待打印超时");
                 }
                 catch (Exception ex)
                 {
