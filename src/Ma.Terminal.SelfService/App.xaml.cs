@@ -27,7 +27,7 @@ namespace Ma.Terminal.SelfService
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            mutex = new System.Threading.Mutex(true, "OnlyRun");
+            mutex = new System.Threading.Mutex(true, "Terminal.SelfService");
             if (mutex.WaitOne(0, false))
             {
                 _logger.Info($"App is OnStartup...");

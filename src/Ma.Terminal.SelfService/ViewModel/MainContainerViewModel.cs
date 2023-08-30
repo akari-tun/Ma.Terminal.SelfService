@@ -40,12 +40,9 @@ namespace Ma.Terminal.SelfService.ViewModel
 
                     if (detail != null)
                     {
-                        _machine.Detail = new Detail()
-                        {
-                            ProjectId = detail.ProjectId,
-                            Address = detail.Address,
-                            Status = detail.Status
-                        };
+                        _machine.Detail.ProjectId = detail.ProjectId;
+                        _machine.Detail.Address = detail.Address;
+                        _machine.Detail.Status = detail.Status;
                     }
                     else
                     {
