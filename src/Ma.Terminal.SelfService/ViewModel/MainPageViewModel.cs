@@ -79,6 +79,8 @@ namespace Ma.Terminal.SelfService.ViewModel
                             Error = IsServiceAvailable ? string.Empty : GetString("NoMaterial");
                         }));
                     }
+#if DEBUG
+#else
                     else if (!_printer.IsReady())
                     {
                         _machine.Detail.Status = 0;
@@ -88,6 +90,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                             Error = IsServiceAvailable ? string.Empty : _printer.LastError;
                         }));
                     }
+#endif
                     else
                     {
                         var detail = await _api.GetMachineDetail();

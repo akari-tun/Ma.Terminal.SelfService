@@ -49,18 +49,19 @@ namespace Ma.Terminal.SelfService.ViewModel
                         _machine.Detail.Status = 0;
                         _logger.Info($"GetMachineDetail => {_api.LastMessage}");
                     }
-
-
-                    for (int i = 0; i < 360000; i++)
-                    {
-                        if (!_isCheckRunning) break;
-                        await Task.Delay(10);
-                    }
                 }
                 catch (Exception ex)
                 {
                     _logger.Error(ex.Message);
                     _logger.Error(ex.StackTrace);
+                }
+                finally
+                {
+                    for (int i = 0; i < 360000; i++)
+                    {
+                        if (!_isCheckRunning) break;
+                        await Task.Delay(10);
+                    }
                 }
             } 
 

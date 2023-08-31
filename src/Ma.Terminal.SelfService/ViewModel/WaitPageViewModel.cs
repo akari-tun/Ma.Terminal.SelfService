@@ -236,15 +236,10 @@ namespace Ma.Terminal.SelfService.ViewModel
             e.HasMorePages = _waitPrintImages.Count > 0;
         }
 
-        private async void PrintEnd(object sender, PrintEventArgs e)
+        private void PrintEnd(object sender, PrintEventArgs e)
         {
             try
             {
-                var model = Ioc.Default.GetRequiredService<UserModel>();
-
-                await Task.Run(() => _lanyard.RollLanyard(_machine.MaxLanyard - _config.Lanyard, model.OrderId));
-                await Task.Run(() => _light.Light(_machine.MaxLanyard - _config.Lanyard));
-
                 _config.Ink--;
                 _config.Lanyard--;
 
@@ -271,6 +266,11 @@ namespace Ma.Terminal.SelfService.ViewModel
                     OnCardPrinted?.Invoke(true, "等待打印");
                     var result = await _printer.WaitPrintEnd(60000, t => Timeout = t);
                     OnCardPrinted?.Invoke(true, result ? "制卡成功" : "等待打印超时");
+
+                    var model = Ioc.Default.GetRequiredService<UserModel>();
+
+                    await Task.Run(() => _lanyard.RollLanyard(_machine.MaxLanyard - _config.Lanyard, model.OrderId));
+                    await Task.Run(() => _light.Light(_machine.MaxLanyard - _config.Lanyard));
                 }
                 catch (Exception ex)
                 {

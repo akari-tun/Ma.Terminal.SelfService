@@ -100,6 +100,7 @@ namespace Ma.Terminal.SelfService.Device.Printer
         public async Task<bool> WaitPrintEnd(int timeout, Action<int> notify)
         {
             bool isSuccess = false;
+            int successCount = 5;
 
             while (timeout > 0 && !isSuccess)
             {
@@ -109,7 +110,12 @@ namespace Ma.Terminal.SelfService.Device.Printer
                     notify?.Invoke(timeout / 1000);
                 }
 
-                isSuccess = PrinterApi.CXCMD_TestUnitReady(piSlot, piID) == 0;
+                if (PrinterApi.CXCMD_TestUnitReady(piSlot, piID) == 0)
+                {
+                    successCount--;
+                    isSuccess = successCount <= 0;
+                }
+
                 timeout -= 200;
                 await Task.Delay(200);
             }

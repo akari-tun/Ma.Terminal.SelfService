@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Ma.Terminal.SelfService.Utils;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Ma.Terminal.SelfService.WebApi.Entities
 {
@@ -21,7 +23,12 @@ namespace Ma.Terminal.SelfService.WebApi.Entities
         /// <summary>
         /// 兼容code
         /// </summary>
+        [JsonConverter(typeof(JsonStringToIntConverter))]
         public int Status { get; set; }
+        /// <summary>
+        /// 兼容code
+        /// </summary>
+        public string Desc { get; set; }
         public T Data { get; set; }
     }
 }

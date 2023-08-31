@@ -1,12 +1,14 @@
 ﻿using Ma.Terminal.SelfService.Model;
 using Ma.Terminal.SelfService.Utils;
 using Ma.Terminal.SelfService.WebApi.Entities;
+using Ma.Terminal.Utils;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Ma.Terminal.SelfService.WebApi
@@ -73,14 +75,23 @@ namespace Ma.Terminal.SelfService.WebApi
         public async Task<UserDetail> OpenCardUserDetail(string phoneNumber, string pickupCode)
         {
             var url = $"{_machine.ApiUrl}{OPEN_CARD_USER_DETAIL}";
-            var para = JsonSerializer.Serialize(new { PhoneNumber = phoneNumber, PickupCode = pickupCode, MachineNo = _machine.MachineNo }, _options);
+            var para = JsonSerializer.Serialize(new { PhoneNumber = phoneNumber, PickupCode = pickupCode, MachineNo = _machine.MachineNo, AppId = _machine.AppId }, _options);
+            var signed = RSAUtils.GetSign(Encoding.UTF8.GetBytes(para), _machine.PrivateKey);
+
             _logger.Trace($"Request {url} -> {para}");
+            _logger.Trace($"Request {url} -> sign:{signed}");
+
+            var header = new Dictionary<string, string>()
+            {
+                { "sign", signed}
+            };
 
             var respone = await HttpUtility.HttpPostResponseAsync($"{_machine.ApiUrl}{OPEN_CARD_USER_DETAIL}",
                 para,
                 10000,
                 Encoding.UTF8,
-                "application/json");
+                "application/json",
+                header);
 
             if (respone.IsSuccessStatusCode)
             {
@@ -111,14 +122,23 @@ namespace Ma.Terminal.SelfService.WebApi
         public async Task<OpenCardApdu> OpenCardApdu(string orderId, string userId, string uid)
         {
             var url = $"{_machine.ApiUrl}{GET_OPEN_CARD_APDU}";
-            var para = JsonSerializer.Serialize(new { OrderId = orderId, UserId = userId, Uid = uid }, _options);
+            var para = JsonSerializer.Serialize(new { OrderId = orderId, UserId = userId, Uid = uid, AppId = _machine.AppId }, _options);
+            var signed = RSAUtils.GetSign(Encoding.UTF8.GetBytes(para), _machine.PrivateKey);
+
             _logger.Trace($"Request {url} -> {para}");
+            _logger.Trace($"Request {url} -> sign:{signed}");
+
+            var header = new Dictionary<string, string>()
+            {
+                { "sign", signed}
+            };
 
             var respone = await HttpUtility.HttpPostResponseAsync($"{_machine.ApiUrl}{GET_OPEN_CARD_APDU}",
                 para,
                 10000,
                 Encoding.UTF8,
-                "application/json");
+                "application/json",
+                header);
 
             if (respone.IsSuccessStatusCode)
             {
@@ -161,15 +181,25 @@ namespace Ma.Terminal.SelfService.WebApi
                         Rapdu = rapdu,
                         Result = result,
                         UserId = userId,
-                        Uid = uid
+                        Uid = uid,
+                        AppId = _machine.AppId
                     }, _options);
+            var signed = RSAUtils.GetSign(Encoding.UTF8.GetBytes(para), _machine.PrivateKey);
+
             _logger.Trace($"Request {url} -> {para}");
+            _logger.Trace($"Request {url} -> sign:{signed}");
+
+            var header = new Dictionary<string, string>()
+            {
+                { "sign", signed}
+            };
 
             var respone = await HttpUtility.HttpPostResponseAsync($"{_machine.ApiUrl}{APDU_EXE_RESULT}",
                 para,
                 10000,
                 Encoding.UTF8,
-                "application/json");
+                "application/json",
+                header);
 
             if (respone.IsSuccessStatusCode)
             {
@@ -210,9 +240,18 @@ namespace Ma.Terminal.SelfService.WebApi
                             OrderId = orderId,
                             UserId = userId,
                             Uid = uid,
-                            MachineNo = machineNo
+                            MachineNo = machineNo,
+                            AppId = _machine.AppId
                         }, _options);
+            var signed = RSAUtils.GetSign(Encoding.UTF8.GetBytes(para), _machine.PrivateKey);
+
             _logger.Trace($"Request {url} -> {para}");
+            _logger.Trace($"Request {url} -> sign:{signed}");
+
+            var header = new Dictionary<string, string>()
+            {
+                { "sign", signed}
+            };
 
             var respone = await HttpUtility.HttpPostResponseAsync($"{_machine.ApiUrl}{FINISH}",
                 JsonSerializer.Serialize(
@@ -221,11 +260,13 @@ namespace Ma.Terminal.SelfService.WebApi
                         OrderId = orderId,
                         UserId = userId,
                         Uid = uid,
-                        MachineNo = machineNo
+                        MachineNo = machineNo,
+                        AppId = _machine.AppId
                     }, _options),
                 10000,
                 Encoding.UTF8,
-                "application/json");
+                "application/json",
+                header);
 
             if (respone.IsSuccessStatusCode)
             {
@@ -266,9 +307,18 @@ namespace Ma.Terminal.SelfService.WebApi
                         MachineNo = machineNo,
                         CardCount = cardCount,
                         InkCount = inkCount,
-                        CardRopeCover = cardRopeCover
+                        CardRopeCover = cardRopeCover,
+                        AppId = _machine.AppId
                     }, _options);
+            var signed = RSAUtils.GetSign(Encoding.UTF8.GetBytes(para), _machine.PrivateKey);
+
             _logger.Trace($"Request {url} -> {para}");
+            _logger.Trace($"Request {url} -> sign:{signed}");
+
+            var header = new Dictionary<string, string>()
+            {
+                { "sign", signed}
+            };
 
             var respone = await HttpUtility.HttpPostResponseAsync($"{_machine.ApiUrl}{SAVE_MACHINE}",
                 JsonSerializer.Serialize(
@@ -277,11 +327,13 @@ namespace Ma.Terminal.SelfService.WebApi
                         MachineNo = machineNo,
                         CardCount = cardCount,
                         InkCount = inkCount,
-                        CardRopeCover = cardRopeCover
+                        CardRopeCover = cardRopeCover,
+                        AppId = _machine.AppId
                     }, _options),
                 10000,
                 Encoding.UTF8,
-                "application/json");
+                "application/json",
+                header);
 
             if (respone.IsSuccessStatusCode)
             {

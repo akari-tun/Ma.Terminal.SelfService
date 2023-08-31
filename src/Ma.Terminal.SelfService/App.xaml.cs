@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Ma.Terminal.SelfService.Model;
 using Ma.Terminal.SelfService.Resource;
+using Ma.Terminal.SelfService.Utils;
 using Ma.Terminal.SelfService.ViewModel;
 using Ma.Terminal.SelfService.WebApi;
 using Microsoft.Extensions.Configuration;
@@ -63,6 +64,7 @@ namespace Ma.Terminal.SelfService
                 {
                     MachineNo = cfgRoot.GetSection("MachineNo").Value,
                     ApiUrl = cfgRoot.GetSection("ApiUrl").Value,
+                    AppId = cfgRoot.GetSection("AppId").Value,
                     PrinterName = cfgRoot.GetSection("PrinterName").Value,
                     LanyardPort = int.Parse(cfgRoot.GetSection("LanyardPort").Value),
                     LanyardBaudrate = int.Parse(cfgRoot.GetSection("LanyardBaudrate").Value),
@@ -72,6 +74,7 @@ namespace Ma.Terminal.SelfService
                     MaxInk = int.Parse(cfgRoot.GetSection("MaxInk").Value),
                     MaxLanyard = int.Parse(cfgRoot.GetSection("MaxLanyard").Value),
                     Password = cfgRoot.GetSection("Password").Value,
+                    PrivateKey = cfgRoot.GetSection("PrivateKey").Value,
                     Detail = new Detail()
                     {
                         ProjectId = string.Empty,
@@ -95,6 +98,16 @@ namespace Ma.Terminal.SelfService
                 })
                 .AddSingleton(config)
                 .BuildServiceProvider());
+
+            try
+            {
+                RSAUtils.Init(cfgRoot.GetSection("PrivateKey").Value);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+                _logger.Error(ex.StackTrace);
+            }
 
             var path = $"pack://application:,,,/Resource/String.xaml";
             Resources.MergedDictionaries[0].Source = new Uri(path);
