@@ -115,6 +115,10 @@ namespace Ma.Terminal.SelfService.Device.Printer
                     successCount--;
                     isSuccess = successCount <= 0;
                 }
+                else
+                {
+                    successCount = 5;
+                }
 
                 timeout -= 200;
                 await Task.Delay(200);
