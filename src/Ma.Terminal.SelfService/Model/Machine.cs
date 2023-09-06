@@ -10,6 +10,7 @@ namespace Ma.Terminal.SelfService.Model
         public string ApiUrl { get; set; }
         public string AppId { get; set; }
         public string PrinterName { get; set; }
+        public int PrinteTimeout { get; set; }
         public int LanyardPort { get; set; }
         public int LanyardBaudrate { get; set; }
         public int LightPort { get; set; }

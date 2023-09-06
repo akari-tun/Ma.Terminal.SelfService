@@ -66,6 +66,7 @@ namespace Ma.Terminal.SelfService
                     ApiUrl = cfgRoot.GetSection("ApiUrl").Value,
                     AppId = cfgRoot.GetSection("AppId").Value,
                     PrinterName = cfgRoot.GetSection("PrinterName").Value,
+                    PrinteTimeout = int.Parse(cfgRoot.GetSection("PrinteTimeout").Value),
                     LanyardPort = int.Parse(cfgRoot.GetSection("LanyardPort").Value),
                     LanyardBaudrate = int.Parse(cfgRoot.GetSection("LanyardBaudrate").Value),
                     LightPort = int.Parse(cfgRoot.GetSection("LightPort").Value),

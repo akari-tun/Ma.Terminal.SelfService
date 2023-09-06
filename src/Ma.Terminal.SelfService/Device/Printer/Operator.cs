@@ -12,6 +12,7 @@ namespace Ma.Terminal.SelfService.Device.Printer
         private Logger _logger = LogManager.GetCurrentClassLogger();
 
         public string LastError { get; set; }
+        public bool IsWaiting { get; set; }
 
         public bool IsReady()
         {
@@ -97,17 +98,17 @@ namespace Ma.Terminal.SelfService.Device.Printer
             }
         }
 
-        public async Task<bool> WaitPrintEnd(int timeout, Action<int> notify)
+        public async Task<bool> WaitPrintEnd(int timeout)
         {
+            IsWaiting = true;
             bool isSuccess = false;
             int successCount = 5;
 
-            while (timeout > 0 && !isSuccess)
+            while (timeout > 0 && !isSuccess && IsWaiting)
             {
                 if (timeout % 1000 == 0)
                 {
                     _logger.Trace($"Wait printed timeout {timeout / 1000} ");
-                    notify?.Invoke(timeout / 1000);
                 }
 
                 if (PrinterApi.CXCMD_TestUnitReady(piSlot, piID) == 0)

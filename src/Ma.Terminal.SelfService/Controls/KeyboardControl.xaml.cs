@@ -103,6 +103,11 @@ namespace Ma.Terminal.SelfService.Controls
             };
         }
 
+        public void SetConfirmEnable(bool enable)
+        {
+            Confirm.IsEnabled = enable;
+        }
+
         private void DigitClick(ClickEffectGrid sender)
         {
             if (_currentTextBox != null && _currentTextBox.Text.Length < _currentTextBox.MaxLength)

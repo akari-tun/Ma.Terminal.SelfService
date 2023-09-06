@@ -36,6 +36,7 @@ namespace Ma.Terminal.SelfService.ViewModel
         private Queue<IssueCardModel> _finishCards;
         private bool _isLoading = false;
         private Logger _logger = LogManager.GetCurrentClassLogger();
+        private int _timeOut = 120;
 
         public delegate void CardPrintedHandler(bool isSuccess, string msg);
         public event CardPrintedHandler OnCardPrinted;
@@ -51,6 +52,18 @@ namespace Ma.Terminal.SelfService.ViewModel
                 SetProperty(ref _timeout, value);
             }
         }
+
+        string _processMsg = string.Empty;
+        public string ProcessMsg
+        {
+            get => _processMsg;
+            set
+            {
+                SetProperty(ref _processMsg, value);
+            }
+        }
+
+        public bool IsWaiting { get; set; }
 
         public WaitPageViewModel(Machine machine,
             Requester api,
@@ -86,19 +99,44 @@ namespace Ma.Terminal.SelfService.ViewModel
 
         public void PrintCard()
         {
-            _issueCardModel = new IssueCardModel();
+            ProcessMsg = string.Empty;
+            Timeout = _machine.PrinteTimeout;
 
-            Task.Run(() => _light.Light());
+            var model = Ioc.Default.GetRequiredService<UserModel>();
+            _issueCardModel = new IssueCardModel
+            {
+                OrderId = model.OrderId,
+                UserId = model.UserId
+            };
+
+            _logger.Trace($"开始制卡 -> [OrderId:{model.OrderId}] [UserId:{model.UserId}]");
 
             Task.Run(async () =>
             {
-                var model = Ioc.Default.GetRequiredService<UserModel>();
+                IsWaiting = true;
 
-                _issueCardModel.OrderId = model.OrderId;
-                _issueCardModel.UserId = model.UserId;
+                while (IsWaiting)
+                {
+                    Timeout -= 1;
+                    IsWaiting = Timeout <= 0;
 
+                    for (int i = 0; i < 100; i++)
+                    {
+                        if (!IsWaiting) break;
+                        await Task.Delay(10);
+                    }
+                }
+
+                _printer.IsWaiting = false;
+            });
+
+            Task.Run(async () =>
+            {
                 bool isCardReady = false;
                 int retry = 5;
+
+                ProcessMsg = "移动卡片到RF位置";
+                _logger.Trace($"制卡中 -> {ProcessMsg}");
 
                 while (!isCardReady && retry > 0)
                 {
@@ -109,14 +147,19 @@ namespace Ma.Terminal.SelfService.ViewModel
 
                 if (!isCardReady)
                 {
+                    _logger.Trace($"制失败 -> {_printer.LastError}");
                     OnCardPrinted?.Invoke(false, _printer.LastError);
                     return;
                 }
 
                 _config.Card--;
 
+                ProcessMsg = "卡片上电";
+                _logger.Trace($"制卡中 -> {ProcessMsg}");
+
                 if (!_reader.OpenCard(out _uid))
                 {
+                    _logger.Trace($"制失败 -> {_reader.LastError}");
                     OnCardPrinted?.Invoke(false, _reader.LastError);
                     _printer.ExitCard();
                     _config.Save();
@@ -125,12 +168,16 @@ namespace Ma.Terminal.SelfService.ViewModel
 
                 _issueCardModel.Uid = _uid;
 
+                ProcessMsg = "请求发卡指令";
+                _logger.Trace($"制卡中 -> {ProcessMsg}");
+
                 var openCardApdu = await _api.OpenCardApdu(model.OrderId,
                     model.UserId,
                     FunTools.BytesToHexStr(_uid));
 
                 if (openCardApdu == null)
                 {
+                    _logger.Trace($"制失败 -> {_api.LastMessage}");
                     OnCardPrinted?.Invoke(false, _api.LastMessage);
                     _printer.ExitCard();
                     _config.Save();
@@ -140,12 +187,19 @@ namespace Ma.Terminal.SelfService.ViewModel
                 int lastIndex = 0;
                 byte[] lastRsp = null;
 
+                ProcessMsg = "执行发卡指令";
+                _logger.Trace($"制卡中 -> {ProcessMsg}");
+
                 foreach (var item in openCardApdu.Capdus)
                 {
+                    ProcessMsg = $"执行发卡指令 [{item.Index}]";
+                    _logger.Trace($"制卡中 -> {ProcessMsg} {item.Capdu}");
+
                     if (!_reader.ExecuteApdu(FunTools.StrToHexBytes(item.Capdu),
                             out lastRsp,
                             item.Sws))
                     {
+                        _logger.Trace($"制失败 -> {_reader.LastError}");
                         OnCardPrinted?.Invoke(false, _reader.LastError);
                         _printer.ExitCard();
                         _config.Save();
@@ -160,6 +214,9 @@ namespace Ma.Terminal.SelfService.ViewModel
 
                 while (isHasNext)
                 {
+                    ProcessMsg = $"请求下一条发卡指令";
+                    _logger.Trace($"制卡中 -> {ProcessMsg} {FunTools.BytesToHexStr(lastRsp)}");
+
                     var apduExe = await _api.ApduExeResult(lastIndex.ToString(),
                         FunTools.BytesToHexStr(lastRsp),
                         result,
@@ -169,6 +226,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                     if (apduExe == null)
                     {
                         isHasNext = false;
+                        _logger.Trace($"制失败 -> {_api.LastMessage}");
                         OnCardPrinted?.Invoke(false, _api.LastMessage);
                         _printer.ExitCard();
                         _config.Save();
@@ -179,12 +237,17 @@ namespace Ma.Terminal.SelfService.ViewModel
                     {
                         foreach (var item in apduExe.Capdus)
                         {
+                            ProcessMsg = $"执行发卡指令 [{item.Index}]";
+                            _logger.Trace($"制卡中 -> {ProcessMsg} {item.Capdu}");
+
                             lastIndex = item.Index;
 
                             if (!_reader.ExecuteApdu(FunTools.StrToHexBytes(item.Capdu),
                                     out lastRsp,
                                     item.Sws))
                             {
+                                ProcessMsg = $"指令执行失败 [{item.Index}]";
+                                _logger.Trace($"制卡中 -> {ProcessMsg}");
                                 result = 1;
                                 break;
                             }
@@ -209,6 +272,9 @@ namespace Ma.Terminal.SelfService.ViewModel
 
                 _waitPrintImages.Enqueue(front);
                 _waitPrintImages.Enqueue(back);
+
+                ProcessMsg = $"打印卡片";
+                _logger.Trace($"制卡中 -> {ProcessMsg}");
 
                 _doucument.Print();
             });
@@ -263,13 +329,19 @@ namespace Ma.Terminal.SelfService.ViewModel
             {
                 try
                 {
-                    OnCardPrinted?.Invoke(true, "等待打印");
-                    var result = await _printer.WaitPrintEnd(60000, t => Timeout = t);
-                    OnCardPrinted?.Invoke(true, result ? "制卡成功" : "等待打印超时");
+                    ProcessMsg = "等待打印";
+                    _logger.Trace($"制卡中 -> {ProcessMsg}");
+
+                    var result = await _printer.WaitPrintEnd(Timeout);
+                    ProcessMsg = result ? "制卡成功" : "等待打印超时";
+                    _logger.Trace($"制卡完成 -> {ProcessMsg}");
+
+                    OnCardPrinted?.Invoke(true, ProcessMsg);
 
                     var model = Ioc.Default.GetRequiredService<UserModel>();
 
                     await Task.Run(() => _lanyard.RollLanyard(_machine.MaxLanyard - _config.Lanyard, model.OrderId));
+                    await Task.Run(() => _light.Light());
                     await Task.Run(() => _light.Light(_machine.MaxLanyard - _config.Lanyard));
                 }
                 catch (Exception ex)

@@ -4,6 +4,7 @@ using Ma.Terminal.SelfService.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,6 +23,12 @@ namespace Ma.Terminal.SelfService.View
     /// </summary>
     public partial class QueryPageView : Page, IPageViewInterface, IBackspaceSupportView, INextPageSupportView, IErrorPageSupportView
     {
+        const string CODE_PATTERN = @"^\d{6}$";
+        const string PHONE_PATTERN = @"^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$";
+
+        Regex _codeRegex = new Regex(CODE_PATTERN);
+        Regex _phoneRegex = new Regex(PHONE_PATTERN);
+
         QueryPageViewModel _viewModel;
         public IViewModel ViewModel => _viewModel;
 
@@ -74,7 +81,15 @@ namespace Ma.Terminal.SelfService.View
             TextCode.GotFocus += TextBox_GotFocus;
             TextPhone.GotFocus += TextBox_GotFocus;
 
+            TextCode.TextChanged += TextCode_TextChanged;
+            TextPhone.TextChanged += TextCode_TextChanged;
+
             Loaded += QueryPageView_Loaded;
+        }
+
+        private void TextCode_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Keyboard.SetConfirmEnable(_codeRegex.IsMatch(TextCode.Text) & _phoneRegex.IsMatch(TextPhone.Text)); 
         }
 
         private void QueryPageView_Loaded(object sender, RoutedEventArgs e)
@@ -84,6 +99,7 @@ namespace Ma.Terminal.SelfService.View
 
             Keyboard.Focus();
             Keyboard.CurrentTextBox = TextCode;
+            Keyboard.SetConfirmEnable(false);
         }
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Ma.Terminal.SelfService.Model;
 using Ma.Terminal.SelfService.ViewModel;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,6 +22,8 @@ namespace Ma.Terminal.SelfService.View
     /// </summary>
     public partial class WaitPageView : Page, IPageViewInterface, IBackspaceSupportView, INextPageSupportView, IErrorPageSupportView
     {
+        private Logger _logger = LogManager.GetCurrentClassLogger();
+
         WaitPageViewModel _viewModel;
         ErrorPageViewModel _errViewModel;
         public IViewModel ViewModel => _viewModel;
@@ -39,17 +42,24 @@ namespace Ma.Terminal.SelfService.View
 
             _viewModel.OnCardPrinted += (p, m) =>
             {
+                _viewModel.IsWaiting = false;
+
                 Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    if (m == "等待打印")
+                    try
                     {
-                        Timeout.Visibility = Visibility.Visible;
-                        return;
-                    }
+                        _errViewModel.ErrMsg = p ? string.Empty : $"制卡失败，{m}";
+                        _errViewModel.ErrorType = "ErrorMessage";
+                        _viewModel.NavigationTo(p ? NextPageView : ErrorPageView);
 
-                    _errViewModel.ErrMsg = p ? string.Empty: $"制卡失败，{m}";
-                    _errViewModel.ErrorType = "ErrorMessage";
-                    _viewModel.NavigationTo(p ? NextPageView : ErrorPageView);
+                        _viewModel.ProcessMsg = string.Empty;
+                        _viewModel.Timeout = 0;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error(ex.Message);
+                        _logger.Error(ex.StackTrace);
+                    }
                 }));
             };
             Title.OnBackspaceClick += () => _viewModel.NavigationTo(BackPageView);
@@ -59,13 +69,11 @@ namespace Ma.Terminal.SelfService.View
         {
             _viewModel.Initialization();
             _viewModel.NavigationTo = navigationParent.NavigationTo;
-            WaitImage.Visibility = Visibility.Visible;
             return this;
         }
 
         public void NavigatedTo(IModel model)
         {
-            Timeout.Visibility = Visibility.Collapsed;
             _viewModel.PrintCard();
         }
     }
