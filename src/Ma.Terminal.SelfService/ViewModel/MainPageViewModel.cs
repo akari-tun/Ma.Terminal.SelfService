@@ -68,7 +68,6 @@ namespace Ma.Terminal.SelfService.ViewModel
             {
                 try
                 {
-
                     if (_config.Card == 0 || _config.Ink == 0 || _config.Lanyard == 0)
                     {
                         _logger.Info($"Meterial low {_config}");

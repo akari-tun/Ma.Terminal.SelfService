@@ -17,6 +17,7 @@ using System.IO;
 using System.Diagnostics;
 using Ma.Terminal.SelfService.Utils;
 using NLog;
+using System.Windows;
 
 namespace Ma.Terminal.SelfService.ViewModel
 {
@@ -117,7 +118,8 @@ namespace Ma.Terminal.SelfService.ViewModel
 
                 while (IsWaiting)
                 {
-                    Timeout -= 1;
+                    await Application.Current.Dispatcher.BeginInvoke(new Action(() => Timeout -= 1));
+
                     IsWaiting = Timeout <= 0;
 
                     for (int i = 0; i < 100; i++)
@@ -332,6 +334,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                     ProcessMsg = "等待打印";
                     _logger.Trace($"制卡中 -> {ProcessMsg}");
 
+                    await Task.Delay(3000);
                     var result = await _printer.WaitPrintEnd(Timeout);
                     ProcessMsg = result ? "制卡成功" : "等待打印超时";
                     _logger.Trace($"制卡完成 -> {ProcessMsg}");
