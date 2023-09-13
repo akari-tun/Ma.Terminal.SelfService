@@ -118,9 +118,8 @@ namespace Ma.Terminal.SelfService.ViewModel
 
                 while (IsWaiting)
                 {
-                    await Application.Current.Dispatcher.BeginInvoke(new Action(() => Timeout -= 1));
-
-                    IsWaiting = Timeout <= 0;
+                    Timeout -= 1;
+                    IsWaiting = Timeout >= 0;
 
                     for (int i = 0; i < 100; i++)
                     {
