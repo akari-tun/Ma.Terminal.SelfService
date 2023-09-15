@@ -343,7 +343,7 @@ namespace Ma.Terminal.SelfService.ViewModel
 
                     ProcessMsg = $"打印中，请等待。。。";
 
-                    var result = await _printer.WaitPrintEnd(Timeout);
+                    var result = await _printer.WaitPrintEnd(Timeout * 1000);
                     ProcessMsg = result ? "制卡成功" : "等待打印超时";
                     _logger.Trace($"制卡完成 -> {ProcessMsg}");
 
