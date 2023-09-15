@@ -57,6 +57,7 @@
             </Grid.RowDefinitions>
             <Viewbox Grid.Row="1" HorizontalAlignment="Center">
                 <TextBlock x:Name="ProcessMsg"
+                           Foreground="Transparent"
                            Text="{Binding ProcessMsg, Mode=OneWay}"
                            FontWeight="Medium"/>
             </Viewbox>
