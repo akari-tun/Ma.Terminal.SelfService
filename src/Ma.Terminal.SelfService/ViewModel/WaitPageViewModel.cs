@@ -120,12 +120,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                 {
                     Timeout -= 1;
                     IsWaiting = Timeout >= 0;
-
-                    for (int i = 0; i < 100; i++)
-                    {
-                        if (!IsWaiting) break;
-                        await Task.Delay(10);
-                    }
+                    await Task.Delay(1000);
                 }
 
                 _printer.IsWaiting = false;
