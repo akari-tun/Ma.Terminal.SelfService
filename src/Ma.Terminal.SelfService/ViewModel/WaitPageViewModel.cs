@@ -285,7 +285,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                 {
                     ProcessMsg = $"制卡失败：{ex.Message}";
 
-                    OnCardPrinted?.Invoke(false, ex.Message);
+                    OnCardPrinted?.Invoke(false, "请联系系统管理员");
                     _printer.ExitCard();
 
                     _logger.Trace(ex.Message);
