@@ -217,7 +217,8 @@
                         <RowDefinition Height="157*"/>
                     </Grid.RowDefinitions>
                     <Viewbox Grid.Row="1">
-                        <TextBlock Text="{StaticResource Confirm}"
+                        <TextBlock x:Name="ConfirmText"
+                                   Text="{StaticResource Confirm}"
                                    Foreground="#0F1826"
                                    FontWeight="Bold"/>
                     </Viewbox>
