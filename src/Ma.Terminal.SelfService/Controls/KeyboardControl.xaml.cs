@@ -23,8 +23,10 @@ namespace Ma.Terminal.SelfService.Controls
 
         public FunctionButtonClickHandler OnConfirmButtonClick;
 
-        static SolidColorBrush ENABLE_BACKGROUND_BRUSH = new SolidColorBrush(Color.FromArgb(0xFF, 0x0F, 0x18, 0x26));
-        static SolidColorBrush DISABLE_BACKGROUND_BRUSH = new SolidColorBrush(Color.FromArgb(0xFF, 0x6E, 0x75, 0x80));
+        static SolidColorBrush ENABLE_BACKGROUND_BRUSH = new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xC9, 0x41));
+        static SolidColorBrush DISABLE_BACKGROUND_BRUSH = new SolidColorBrush(Color.FromArgb(0xFF, 0xEB, 0xEB, 0xEB));
+        static SolidColorBrush ENABLE_TEXT_BRUSH = new SolidColorBrush(Color.FromArgb(0xFF, 0x0F, 0x18, 0x26));
+        static SolidColorBrush DISABLE_TEXT_BRUSH = new SolidColorBrush(Color.FromArgb(0xFF, 0x6E, 0x75, 0x80));
 
         string _inputed = string.Empty;
 
@@ -109,7 +111,8 @@ namespace Ma.Terminal.SelfService.Controls
         public void SetConfirmEnable(bool enable)
         {
             Confirm.IsEnabled = enable;
-            ConfirmText.Foreground = enable ? ENABLE_BACKGROUND_BRUSH : DISABLE_BACKGROUND_BRUSH;
+            Confirm.Background = enable ? ENABLE_BACKGROUND_BRUSH : DISABLE_BACKGROUND_BRUSH;
+            ConfirmText.Foreground = enable ? ENABLE_TEXT_BRUSH : DISABLE_TEXT_BRUSH;
         }
 
         private void DigitClick(ClickEffectGrid sender)
