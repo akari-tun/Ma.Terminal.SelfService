@@ -24,7 +24,7 @@ namespace Ma.Terminal.SelfService.View
     public partial class QueryPageView : Page, IPageViewInterface, IBackspaceSupportView, INextPageSupportView, IErrorPageSupportView
     {
         const string CODE_PATTERN = @"^\d{6}$";
-        const string PHONE_PATTERN = @"^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$";
+        const string PHONE_PATTERN = @"^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|17[0-9]|18[0|1|2|3|5|6|7|8|9]|19[0-9]|)\d{8}$";
 
         Regex _codeRegex = new Regex(CODE_PATTERN);
         Regex _phoneRegex = new Regex(PHONE_PATTERN);
