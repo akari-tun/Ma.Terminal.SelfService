@@ -136,69 +136,31 @@ namespace Ma.Terminal.SelfService.ViewModel
                 bool isCardReady = false;
                 int retry = 5;
 
-                ProcessMsg = "移动卡片到RF位置";
-                _logger.Trace($"制卡中 -> {ProcessMsg}");
-
-                while (!isCardReady && retry > 0)
+                try
                 {
-                    isCardReady = _printer.MoveToRfPosition();
-                    await Task.Delay(300);
-                    retry--;
-                }
+                    ProcessMsg = "移动卡片到RF位置";
+                    _logger.Trace($"制卡中 -> {ProcessMsg}");
 
-                if (!isCardReady)
-                {
-                    _logger.Trace($"制失败 -> {_printer.LastError}");
-                    OnCardPrinted?.Invoke(false, _printer.LastError);
-                    return;
-                }
+                    while (!isCardReady && retry > 0)
+                    {
+                        isCardReady = _printer.MoveToRfPosition();
+                        await Task.Delay(300);
+                        retry--;
+                    }
 
-                _config.Card--;
+                    if (!isCardReady)
+                    {
+                        _logger.Trace($"制失败 -> {_printer.LastError}");
+                        OnCardPrinted?.Invoke(false, _printer.LastError);
+                        return;
+                    }
 
-                ProcessMsg = "卡片上电";
-                _logger.Trace($"制卡中 -> {ProcessMsg}");
+                    _config.Card--;
 
-                if (!_reader.OpenCard(out _uid))
-                {
-                    _logger.Trace($"制失败 -> {_reader.LastError}");
-                    OnCardPrinted?.Invoke(false, _reader.LastError);
-                    _printer.ExitCard();
-                    _config.Save();
-                    return;
-                }
+                    ProcessMsg = "卡片上电";
+                    _logger.Trace($"制卡中 -> {ProcessMsg}");
 
-                _issueCardModel.Uid = _uid;
-
-                ProcessMsg = "请求发卡指令";
-                _logger.Trace($"制卡中 -> {ProcessMsg}");
-
-                var openCardApdu = await _api.OpenCardApdu(model.OrderId,
-                    model.UserId,
-                    FunTools.BytesToHexStr(_uid));
-
-                if (openCardApdu == null)
-                {
-                    _logger.Trace($"制失败 -> {_api.LastMessage}");
-                    OnCardPrinted?.Invoke(false, _api.LastMessage);
-                    _printer.ExitCard();
-                    _config.Save();
-                    return;
-                }
-
-                int lastIndex = 0;
-                byte[] lastRsp = null;
-
-                ProcessMsg = "执行发卡指令";
-                _logger.Trace($"制卡中 -> {ProcessMsg}");
-
-                foreach (var item in openCardApdu.Capdus)
-                {
-                    ProcessMsg = $"执行发卡指令 [{item.Index}]";
-                    _logger.Trace($"制卡中 -> {ProcessMsg} {item.Capdu}");
-
-                    if (!_reader.ExecuteApdu(FunTools.StrToHexBytes(item.Capdu),
-                            out lastRsp,
-                            item.Sws))
+                    if (!_reader.OpenCard(out _uid))
                     {
                         _logger.Trace($"制失败 -> {_reader.LastError}");
                         OnCardPrinted?.Invoke(false, _reader.LastError);
@@ -207,26 +169,17 @@ namespace Ma.Terminal.SelfService.ViewModel
                         return;
                     }
 
-                    lastIndex = item.Index;
-                }
+                    _issueCardModel.Uid = _uid;
 
-                bool isHasNext = true;
-                int result = 0;
+                    ProcessMsg = "请求发卡指令";
+                    _logger.Trace($"制卡中 -> {ProcessMsg}");
 
-                while (isHasNext)
-                {
-                    ProcessMsg = $"请求下一条发卡指令";
-                    _logger.Trace($"制卡中 -> {ProcessMsg} {FunTools.BytesToHexStr(lastRsp)}");
-
-                    var apduExe = await _api.ApduExeResult(lastIndex.ToString(),
-                        FunTools.BytesToHexStr(lastRsp),
-                        result,
+                    var openCardApdu = await _api.OpenCardApdu(model.OrderId,
                         model.UserId,
                         FunTools.BytesToHexStr(_uid));
 
-                    if (apduExe == null)
+                    if (openCardApdu == null)
                     {
-                        isHasNext = false;
                         _logger.Trace($"制失败 -> {_api.LastMessage}");
                         OnCardPrinted?.Invoke(false, _api.LastMessage);
                         _printer.ExitCard();
@@ -234,50 +187,111 @@ namespace Ma.Terminal.SelfService.ViewModel
                         return;
                     }
 
-                    if (apduExe.Capdus != null && apduExe.Capdus.Count > 0)
+                    int lastIndex = 0;
+                    byte[] lastRsp = null;
+
+                    ProcessMsg = "执行发卡指令";
+                    _logger.Trace($"制卡中 -> {ProcessMsg}");
+
+                    foreach (var item in openCardApdu.Capdus)
                     {
-                        foreach (var item in apduExe.Capdus)
+                        ProcessMsg = $"执行发卡指令 [{item.Index}]";
+                        _logger.Trace($"制卡中 -> {ProcessMsg} {item.Capdu}");
+
+                        if (!_reader.ExecuteApdu(FunTools.StrToHexBytes(item.Capdu),
+                                out lastRsp,
+                                item.Sws))
                         {
-                            ProcessMsg = $"执行发卡指令 [{item.Index}]";
-                            _logger.Trace($"制卡中 -> {ProcessMsg} {item.Capdu}");
+                            _logger.Trace($"制失败 -> {_reader.LastError}");
+                            OnCardPrinted?.Invoke(false, _reader.LastError);
+                            _printer.ExitCard();
+                            _config.Save();
+                            return;
+                        }
 
-                            lastIndex = item.Index;
+                        lastIndex = item.Index;
+                    }
 
-                            if (!_reader.ExecuteApdu(FunTools.StrToHexBytes(item.Capdu),
-                                    out lastRsp,
-                                    item.Sws))
+                    bool isHasNext = true;
+                    int result = 0;
+
+                    while (isHasNext)
+                    {
+                        ProcessMsg = $"请求下一条发卡指令";
+                        _logger.Trace($"制卡中 -> {ProcessMsg} {FunTools.BytesToHexStr(lastRsp)}");
+
+                        var apduExe = await _api.ApduExeResult(lastIndex.ToString(),
+                            FunTools.BytesToHexStr(lastRsp),
+                            result,
+                            model.UserId,
+                            FunTools.BytesToHexStr(_uid));
+
+                        if (apduExe == null)
+                        {
+                            isHasNext = false;
+                            _logger.Trace($"制失败 -> {_api.LastMessage}");
+                            OnCardPrinted?.Invoke(false, _api.LastMessage);
+                            _printer.ExitCard();
+                            _config.Save();
+                            return;
+                        }
+
+                        if (apduExe.Capdus != null && apduExe.Capdus.Count > 0)
+                        {
+                            foreach (var item in apduExe.Capdus)
                             {
-                                ProcessMsg = $"指令执行失败 [{item.Index}]";
-                                _logger.Trace($"制卡中 -> {ProcessMsg}");
-                                result = 1;
-                                break;
+                                ProcessMsg = $"执行发卡指令 [{item.Index}]";
+                                _logger.Trace($"制卡中 -> {ProcessMsg} {item.Capdu}");
+
+                                lastIndex = item.Index;
+
+                                if (!_reader.ExecuteApdu(FunTools.StrToHexBytes(item.Capdu),
+                                        out lastRsp,
+                                        item.Sws))
+                                {
+                                    ProcessMsg = $"指令执行失败 [{item.Index}]";
+                                    _logger.Trace($"制卡中 -> {ProcessMsg}");
+                                    result = 1;
+                                    break;
+                                }
                             }
                         }
+                        else
+                        {
+                            isHasNext = !apduExe.Finished;
+                        }
                     }
-                    else
-                    {
-                        isHasNext = !apduExe.Finished;
-                    }
+
+                    _waitPrintImages.Clear();
+
+                    var front = string.IsNullOrEmpty(model.CardFacePath) ? Image.FromFile($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Image\\Photo.png") : ImageUtils.GetBitmapFromUrl(model.CardFacePath);
+                    var back = string.IsNullOrEmpty(model.CardBackPath) ? Image.FromFile($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Image\\Photo.png") : ImageUtils.GetBitmapFromUrl(model.CardBackPath);
+
+                    front.Save($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Front.jpg");
+                    back.Save($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Back.jpg");
+
+                    front.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                    back.RotateFlip(RotateFlipType.Rotate270FlipNone);
+
+                    _waitPrintImages.Enqueue(front);
+                    _waitPrintImages.Enqueue(back);
+
+                    ProcessMsg = $"打印卡片";
+                    _logger.Trace($"制卡中 -> {ProcessMsg}");
+
+                    _doucument.Print();
+                }
+                catch (Exception ex)
+                {
+                    ProcessMsg = $"制卡失败：{ex.Message}";
+
+                    OnCardPrinted?.Invoke(false, ex.Message);
+                    _printer.ExitCard();
+
+                    _logger.Trace(ex.Message);
+                    _logger.Error(ex.StackTrace);
                 }
 
-                _waitPrintImages.Clear();
-
-                var front = string.IsNullOrEmpty(model.CardFacePath) ? Image.FromFile($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Image\\Photo.png") : ImageUtils.GetBitmapFromUrl(model.CardFacePath);
-                var back = string.IsNullOrEmpty(model.CardBackPath) ? Image.FromFile($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Image\\Photo.png") : ImageUtils.GetBitmapFromUrl(model.CardBackPath);
-
-                front.Save($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Front.jpg");
-                back.Save($"{AppDomain.CurrentDomain.BaseDirectory}Resource\\Back.jpg");
-
-                front.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                back.RotateFlip(RotateFlipType.Rotate270FlipNone);
-
-                _waitPrintImages.Enqueue(front);
-                _waitPrintImages.Enqueue(back);
-
-                ProcessMsg = $"打印卡片";
-                _logger.Trace($"制卡中 -> {ProcessMsg}");
-
-                _doucument.Print();
             });
         }
 
@@ -319,6 +333,7 @@ namespace Ma.Terminal.SelfService.ViewModel
             }
             catch (Exception ex)
             {
+                OnCardPrinted?.Invoke(false, ex.Message);
                 _logger.Error(ex.Message);
                 _logger.Error(ex.StackTrace);
             }
@@ -357,6 +372,7 @@ namespace Ma.Terminal.SelfService.ViewModel
                 }
                 catch (Exception ex)
                 {
+                    OnCardPrinted?.Invoke(false, ex.Message);
                     _logger.Error(ex.Message);
                     _logger.Error(ex.StackTrace);
                 }
