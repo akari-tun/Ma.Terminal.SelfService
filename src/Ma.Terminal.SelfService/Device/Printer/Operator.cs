@@ -102,7 +102,7 @@ namespace Ma.Terminal.SelfService.Device.Printer
         {
             IsWaiting = true;
             bool isSuccess = false;
-            int successCount = 5;
+            int successCount = 10;
 
             while (timeout > 0 && !isSuccess && IsWaiting)
             {
@@ -118,7 +118,7 @@ namespace Ma.Terminal.SelfService.Device.Printer
                 }
                 else
                 {
-                    successCount = 5;
+                    successCount = 10;
                 }
 
                 timeout -= 200;

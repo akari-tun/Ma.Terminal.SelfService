@@ -333,7 +333,16 @@ namespace Ma.Terminal.SelfService.ViewModel
                     ProcessMsg = "等待打印";
                     _logger.Trace($"制卡中 -> {ProcessMsg}");
 
-                    await Task.Delay(3000);
+                    int waitTime = 20;
+                    while (waitTime > 0)
+                    {
+                        ProcessMsg = $"打印机预热，等待打印开始 {waitTime}";
+                        await Task.Delay(1000);
+                        waitTime -= 1;
+                    }
+
+                    ProcessMsg = $"打印中，请等待。。。";
+
                     var result = await _printer.WaitPrintEnd(Timeout);
                     ProcessMsg = result ? "制卡成功" : "等待打印超时";
                     _logger.Trace($"制卡完成 -> {ProcessMsg}");
