@@ -80,9 +80,10 @@ namespace Ma.Terminal.SelfService.ViewModel
                     }
 #if DEBUG
 #else
-                    else if (!_printer.IsReady())
+                    else if (!_printer.IsReady(true))
                     {
                         _machine.Detail.Status = 0;
+
                         await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                         {
                             IsServiceAvailable = _machine.Detail.Status == 1;

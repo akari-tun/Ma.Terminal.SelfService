@@ -150,7 +150,9 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50*"/>
                     <RowDefinition Height="50*"/>
-                    <RowDefinition Height="100*"/>
+                    <RowDefinition Height="30*"/>
+                    <RowDefinition Height="40*"/>
+                    <RowDefinition Height="30*"/>
                 </Grid.RowDefinitions>
                 <Viewbox Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock x:Name="ErrorMsg" Foreground="Red" Text="{Binding Path=Error, Mode=OneWay}" />

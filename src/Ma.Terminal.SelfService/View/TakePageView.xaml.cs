@@ -35,7 +35,11 @@ namespace Ma.Terminal.SelfService.View
             DataContext = _viewModel;
 
             Title.OnBackspaceClick += () => _viewModel.NavigationTo(BackPageView);
-            Close.OnClick += p => _viewModel.NavigationTo(NextPageView);
+            Close.OnClick += p =>
+            {
+                _viewModel.IsWaiting = false;
+                _viewModel.NavigationTo(NextPageView);
+            };
         }
 
         public IPageViewInterface Init(INavigationSupport navigationParent)
@@ -47,6 +51,7 @@ namespace Ma.Terminal.SelfService.View
 
         public void NavigatedTo(IModel model)
         {
+            _viewModel.WaitAutoClose(NextPageView);
         }
     }
 }
